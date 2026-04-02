@@ -545,34 +545,44 @@ function mkChart(id, cfg) {
 }
 
 // ============ HELPERS ============
-// Parsear fechas siempre en zona horaria CDMX (UTC-6) para consistencia entre dispositivos
-function parseDate(str) {
-  if (!str) return null;
-  // Si la fecha ya tiene timezone info, convertir a CDMX
-  // Si no tiene, asumirla como local CDMX
-  const d = new Date(str);
-  if (isNaN(d)) return null;
-  // Ajustar a UTC-6 (CDMX) — offset en minutos: 360
-  // Usamos toLocaleString para extraer la hora en CDMX
-  return d;
-}
+// cdmxDate(): convierte cualquier timestamp del Sheet a un Date JS correcto.
+// Maneja dos formatos:
+//   1. Con offset explícito (Zapier: +02:00, Make: -06:00, etc.) → lo respeta y convierte
+//   2. Sin offset (carga masiva CSV de Clientify: "2026-04-01 18:16:24") → asume CDMX (UTC-6)
+// getMonth() y getWeekRange() operan en hora CDMX para que los filtros coincidan con Clientify.
 function cdmxDate(str) {
   if (!str) return null;
-  // FIX DEFINITIVO: El Sheet tiene timestamps con offsets mixtos (+02:00, -06:00)
-  // según si vienen de Zapier o Make. Estos offsets son inconsistentes y causan
-  // que leads de fin/inicio de mes aparezcan en el mes equivocado.
-  // Solución: ignorar cualquier offset y tomar solo YYYY-MM-DDTHH:MM:SS como UTC.
-  // Esto coincide exactamente con lo que Clientify muestra en su interfaz.
-  const clean = String(str).trim().replace(' ', 'T').slice(0, 19);
-  if (!clean || clean.length < 16) return null;
-  const d = new Date(clean + 'Z');
-  if (isNaN(d)) return null;
-  return d;
+  const s = String(str).trim();
+
+  // Detectar si el string tiene offset de zona horaria explícito
+  // Formatos posibles: Z, +HH:MM, -HH:MM al final (puede haber microsegundos antes)
+  const hasOffset = /Z$|[+\-]\d{2}:\d{2}$/.test(s);
+
+  if (hasOffset) {
+    // Tiene offset explícito (viene de Zapier con +02:00, Make con -06:00, etc.)
+    // Reemplazar espacio por T si hace falta, recortar microsegundos pero conservar offset
+    // Ejemplo: "2026-04-02T21:46:44.309077+02:00" → parsear con su offset real
+    const normalized = s.replace(' ', 'T').replace(/(\.\d+)([Z+\-])/, '$2');
+    const d = new Date(normalized);
+    if (isNaN(d)) return null;
+    // Convertir el instante UTC resultante a hora CDMX (UTC-6)
+    // Devolvemos el Date tal cual (es un instante en el tiempo, correcto)
+    return d;
+  } else {
+    // Sin offset: viene de la carga masiva CSV de Clientify, ya está en hora CDMX
+    // Tratar como CDMX (UTC-6) agregando el offset manualmente
+    const clean = s.replace(' ', 'T').slice(0, 19);
+    if (!clean || clean.length < 16) return null;
+    const d = new Date(clean + '-06:00');
+    if (isNaN(d)) return null;
+    return d;
+  }
 }
 function getMonth(d) {
   const dt = cdmxDate(d); if (!dt || isNaN(dt)) return null;
-  // Usar UTC para que coincida con Clientify independiente del dispositivo
-  return `${dt.getUTCFullYear()}-${String(dt.getUTCMonth()+1).padStart(2,'0')}`;
+  // Extraer año/mes en hora CDMX (UTC-6), no en UTC del servidor
+  const cdmx = new Date(dt.getTime() - 6 * 3600000);
+  return `${cdmx.getUTCFullYear()}-${String(cdmx.getUTCMonth()+1).padStart(2,'0')}`;
 }
 function monthLabel(ym) {
   if (!ym) return '';
@@ -580,19 +590,20 @@ function monthLabel(ym) {
   return ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][+m]+' '+y.slice(2);
 }
 function getWeekRange(offset=0) {
-  // Construir rango en UTC para que coincida con Clientify en cualquier dispositivo
-  const now = new Date();
-  const dayUTC = now.getUTCDay() === 0 ? 7 : now.getUTCDay(); // lunes=1
-  const monUTC = new Date(Date.UTC(
-    now.getUTCFullYear(), now.getUTCMonth(),
-    now.getUTCDate() - dayUTC + 1 + offset*7,
+  // Construir rango semanal en hora CDMX (UTC-6)
+  // "ahora" en CDMX = UTC - 6h
+  const nowCDMX = new Date(Date.now() - 6 * 3600000);
+  const dayCDMX = nowCDMX.getUTCDay() === 0 ? 7 : nowCDMX.getUTCDay(); // lunes=1
+  // Lunes 00:00:00 CDMX de la semana con offset dado
+  const monCDMX = new Date(Date.UTC(
+    nowCDMX.getUTCFullYear(), nowCDMX.getUTCMonth(),
+    nowCDMX.getUTCDate() - dayCDMX + 1 + offset * 7,
     0, 0, 0, 0
   ));
-  const sunUTC = new Date(Date.UTC(
-    monUTC.getUTCFullYear(), monUTC.getUTCMonth(),
-    monUTC.getUTCDate() + 6,
-    23, 59, 59, 999
-  ));
+  // Este Date.UTC ya representa 00:00 CDMX → sumar 6h para tener el instante UTC equivalente
+  const monUTC = new Date(monCDMX.getTime() + 6 * 3600000);
+  // Domingo 23:59:59.999 CDMX = lunes + 6 días y 23:59:59 CDMX
+  const sunUTC = new Date(monUTC.getTime() + 7 * 86400000 - 1);
   return [monUTC, sunUTC];
 }
 function inWeek(dateStr, offset=0) {

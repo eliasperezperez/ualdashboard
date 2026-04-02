@@ -572,7 +572,8 @@ function cdmxDate(str) {
   } else {
     // Sin offset: viene de la carga masiva CSV de Clientify, ya está en hora CDMX
     // Tratar como CDMX (UTC-6) agregando el offset manualmente
-    const clean = s.replace(' ', 'T').slice(0, 19);
+    // Normalizar hora de un dígito: "2026-03-30 9:21:20" → "2026-03-30T09:21:20"
+    const clean = s.replace(' ', 'T').replace(/T(\d):/, 'T0$1:').slice(0, 19);
     if (!clean || clean.length < 16) return null;
     const d = new Date(clean + '-06:00');
     if (isNaN(d)) return null;

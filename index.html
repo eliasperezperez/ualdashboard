@@ -291,6 +291,7 @@ tr:hover td{background:var(--surface2);}
     <div id="lastUpdate" style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);"></div>
     <button class="btn" id="modeBtn" onclick="toggleMode()">🌙 MODO ANÁLISIS</button>
     <button class="btn" onclick="descargarPDF()" style="border-color:var(--blue);color:var(--blue);">⬇ DESCARGAR PDF</button>
+    <button class="btn" onclick="diagnostico()" style="border-color:var(--orange);color:var(--orange);">🔍 DIAG</button>
     <button class="btn primary" id="btnRefresh" onclick="loadData()">
       <span class="spin">↻</span> ACTUALIZAR
     </button>
@@ -1364,6 +1365,57 @@ function renderMeta(rows) {
     },
     options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()}}}}
   });
+}
+
+
+// ============ DIAGNÓSTICO ============
+function diagnostico() {
+  console.log("=== DIAGNÓSTICO DE FECHAS ===");
+  console.log("Total registros en allData:", allData.length);
+  
+  // Contar por mes
+  const mesMap = {};
+  let sinFecha = 0, formatoRaro = [];
+  
+  allData.forEach((d, i) => {
+    const raw = d.creado;
+    if (!raw) { sinFecha++; return; }
+    const m = getMonth(raw);
+    if (!m) { 
+      sinFecha++;
+      if (formatoRaro.length < 5) formatoRaro.push({idx: i, raw: raw});
+      return;
+    }
+    mesMap[m] = (mesMap[m] || 0) + 1;
+  });
+  
+  console.log("\n--- Conteo por mes ---");
+  Object.keys(mesMap).sort().forEach(m => {
+    console.log(m + ": " + mesMap[m]);
+  });
+  
+  console.log("\nSin fecha o formato no reconocido:", sinFecha);
+  
+  if (formatoRaro.length > 0) {
+    console.log("\nEjemplos de fechas no reconocidas:");
+    formatoRaro.forEach(f => console.log("  fila " + f.idx + ":", JSON.stringify(f.raw)));
+  }
+  
+  // Mostrar primeras 3 fechas de cada mes
+  console.log("\n--- Primeras 3 fechas por mes (raw del CSV) ---");
+  const muestraMes = {};
+  allData.forEach(d => {
+    const m = getMonth(d.creado);
+    if (!m) return;
+    if (!muestraMes[m]) muestraMes[m] = [];
+    if (muestraMes[m].length < 3) muestraMes[m].push(d.creado);
+  });
+  Object.keys(muestraMes).sort().forEach(m => {
+    console.log(m + ":");
+    muestraMes[m].forEach(f => console.log("  " + JSON.stringify(f)));
+  });
+  
+  alert("Diagnóstico listo. Abre la Consola del navegador (F12 → Console) y copia todo lo que dice ahí. Pásaselo a Claude.");
 }
 
 // ============ INIT ============

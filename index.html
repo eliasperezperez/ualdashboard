@@ -557,12 +557,14 @@ function parseDate(str) {
 }
 function cdmxDate(str) {
   if (!str) return null;
-  // FIX: Clientify almacena timestamps en UTC puro.
-  // Parseamos como UTC para que los conteos coincidan exactamente con Clientify.
-  if (str && str.length <= 19 && !str.includes('T') && !str.includes('Z') && !str.includes('+')) {
-    return new Date(str.replace(' ', 'T') + 'Z');
-  }
-  const d = new Date(str);
+  // FIX DEFINITIVO: El Sheet tiene timestamps con offsets mixtos (+02:00, -06:00)
+  // según si vienen de Zapier o Make. Estos offsets son inconsistentes y causan
+  // que leads de fin/inicio de mes aparezcan en el mes equivocado.
+  // Solución: ignorar cualquier offset y tomar solo YYYY-MM-DDTHH:MM:SS como UTC.
+  // Esto coincide exactamente con lo que Clientify muestra en su interfaz.
+  const clean = String(str).trim().replace(' ', 'T').slice(0, 19);
+  if (!clean || clean.length < 16) return null;
+  const d = new Date(clean + 'Z');
   if (isNaN(d)) return null;
   return d;
 }

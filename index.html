@@ -552,7 +552,8 @@ function mkChart(id, cfg) {
 // getMonth() y getWeekRange() operan en hora CDMX para que los filtros coincidan con Clientify.
 function cdmxDate(str) {
   if (!str) return null;
-  const s = String(str).trim();
+  // Eliminar comillas dobles o simples que PapaParse a veces deja como parte del valor
+  const s = String(str).trim().replace(/^["']|["']$/g, '');
 
   // Detectar si el string tiene offset de zona horaria explícito
   // Formatos posibles: Z, +HH:MM, -HH:MM al final (puede haber microsegundos antes)

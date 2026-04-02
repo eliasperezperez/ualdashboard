@@ -319,6 +319,7 @@ tr:hover td{background:var(--surface2);}
   <div class="tab" onclick="showTab('oferta',this)">🎓 OFERTA</div>
   <div class="tab" onclick="showTab('perdidos',this)">❌ PERDIDOS</div>
   <div class="tab" onclick="showTab('insights',this)">💡 INSIGHTS</div>
+  <div class="tab" onclick="showTab('meta',this)">📱 META ADS</div>
 </div>
 
 <!-- GENERAL -->
@@ -444,6 +445,51 @@ tr:hover td{background:var(--surface2);}
   </div>
 </div>
 
+
+<!-- META ADS -->
+<div class="section" id="tab-meta">
+  <div id="metaNoData" style="padding:40px 0;text-align:center;">
+    <div style="font-size:36px;margin-bottom:12px;">📱</div>
+    <div style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);margin-bottom:8px;">MÓDULO META ADS</div>
+    <div style="font-size:12px;color:var(--muted);max-width:460px;margin:0 auto 24px;line-height:1.8;">
+      Sube el reporte CSV de Meta Ads Manager para cruzar inversión, alcance e impresiones con los leads y conversiones reales del CRM.
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:20px;max-width:480px;margin:0 auto;text-align:left;">
+      <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:12px;">PASOS PARA OBTENER EL CSV</div>
+      <div style="font-size:12px;color:var(--text);line-height:2;">
+        1. Entra a <strong>Meta Ads Manager → Informes</strong><br>
+        2. Filtra por el período que quieras analizar<br>
+        3. Selecciona columnas: <strong>Campaña, Fecha, Inversión, Alcance, Impresiones, Resultados, Costo por resultado</strong><br>
+        4. Exporta como <strong>CSV</strong><br>
+        5. Súbelo aquí abajo
+      </div>
+    </div>
+    <div id="metaDropZone" style="margin:20px auto 0;max-width:480px;border:2px dashed var(--border);border-radius:6px;padding:24px;cursor:pointer;transition:border-color .2s;" 
+         onclick="document.getElementById('metaFileInput').click()"
+         ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
+         ondragleave="this.style.borderColor='var(--border)'"
+         ondrop="event.preventDefault();this.style.borderColor='var(--border)';handleMetaFile(event.dataTransfer.files[0])">
+      <input type="file" id="metaFileInput" accept=".csv" style="display:none" onchange="handleMetaFile(this.files[0])">
+      <div style="font-size:20px;margin-bottom:6px;">📂</div>
+      <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);">CLICK O ARRASTRA TU CSV DE META ADS</div>
+    </div>
+  </div>
+  <div id="metaDashboard" style="display:none;">
+    <div class="kpi-grid" id="kpiMeta"></div>
+    <div class="chart-grid">
+      <div class="cbox"><h3>Inversión por campaña</h3><canvas id="cMetaInversion"></canvas></div>
+      <div class="cbox"><h3>CPL Meta vs CPL Real CRM</h3><canvas id="cMetaCPL"></canvas></div>
+    </div>
+    <div class="chart-grid">
+      <div class="cbox"><h3>Alcance e impresiones</h3><canvas id="cMetaAlcance"></canvas></div>
+      <div class="cbox"><h3>Leads Meta reportados vs Leads CRM reales</h3><canvas id="cMetaLeads"></canvas></div>
+    </div>
+    <div style="text-align:right;margin-top:8px;">
+      <button class="btn" onclick="limpiarMeta()" style="font-size:9px;">✕ Quitar datos Meta</button>
+    </div>
+  </div>
+</div>
+
 <!-- INSIGHTS -->
 <div class="section" id="tab-insights">
   <div style="margin-bottom:16px;">
@@ -522,7 +568,8 @@ function cdmxDate(str) {
 }
 function getMonth(d) {
   const dt = cdmxDate(d); if (!dt || isNaN(dt)) return null;
-  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`;
+  // Usar UTC para que coincida con Clientify independiente del dispositivo
+  return `${dt.getUTCFullYear()}-${String(dt.getUTCMonth()+1).padStart(2,'0')}`;
 }
 function monthLabel(ym) {
   if (!ym) return '';
@@ -530,11 +577,20 @@ function monthLabel(ym) {
   return ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][+m]+' '+y.slice(2);
 }
 function getWeekRange(offset=0) {
+  // Construir rango en UTC para que coincida con Clientify en cualquier dispositivo
   const now = new Date();
-  const day = now.getDay() === 0 ? 7 : now.getDay(); // lunes=1
-  const mon = new Date(now); mon.setDate(now.getDate() - day + 1 + offset*7); mon.setHours(0,0,0,0);
-  const sun = new Date(mon); sun.setDate(mon.getDate() + 6); sun.setHours(23,59,59,999);
-  return [mon, sun];
+  const dayUTC = now.getUTCDay() === 0 ? 7 : now.getUTCDay(); // lunes=1
+  const monUTC = new Date(Date.UTC(
+    now.getUTCFullYear(), now.getUTCMonth(),
+    now.getUTCDate() - dayUTC + 1 + offset*7,
+    0, 0, 0, 0
+  ));
+  const sunUTC = new Date(Date.UTC(
+    monUTC.getUTCFullYear(), monUTC.getUTCMonth(),
+    monUTC.getUTCDate() + 6,
+    23, 59, 59, 999
+  ));
+  return [monUTC, sunUTC];
 }
 function inWeek(dateStr, offset=0) {
   const [a,b] = getWeekRange(offset);
@@ -871,7 +927,7 @@ function renderSemana() {
   const dayData=[0,0,0,0,0,0,0];
   semData.forEach(d=>{
     const dt=cdmxDate(d.creado); if(!dt||isNaN(dt)) return;
-    let wd=dt.getDay(); wd=wd===0?6:wd-1;
+    let wd=dt.getUTCDay(); wd=wd===0?6:wd-1;
     dayData[wd]++;
   });
   mkChart('cSemDias',{type:'bar',data:{labels:dayNames,datasets:[{label:'Leads',data:dayData,backgroundColor:dayData.map((_,i)=>i===6?C.red():C.blue()),borderWidth:0,borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()}}}}});
@@ -1028,7 +1084,7 @@ function renderTiempo(data) {
   // Heatmap
   const hmEl=document.getElementById('heatmap'); hmEl.innerHTML='';
   const convH=Array(24).fill(0).map((_,h)=>{
-    const sub=data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getHours()===h; });
+    const sub=data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getUTCHours()===h; });
     const cli=sub.filter(d=>d.estado==='cliente').length;
     return {vol:sub.length, conv:sub.length?+(cli/sub.length*100).toFixed(1):0};
   });
@@ -1054,14 +1110,14 @@ function renderTiempo(data) {
   const dNames=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
   const dData=dNames.map((_,i)=>{
     const wd=i+1===7?0:i+1;
-    const sub=data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getDay()===wd; });
+    const sub=data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getUTCDay()===wd; });
     const cli=sub.filter(d=>d.estado==='cliente').length;
     return sub.length?+(cli/sub.length*100).toFixed(2):0;
   });
   mkChart('cDiaSem',{type:'bar',data:{labels:dNames,datasets:[{label:'Conv%',data:dData,backgroundColor:dData.map(v=>v>=2?C.green():v>=1?C.gold():C.red()),borderWidth:0,borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()},ticks:{callback:v=>v+'%'}}}}});
 
   // Vol horas
-  const hVol=Array(24).fill(0).map((_,h)=>data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getHours()===h; }).length);
+  const hVol=Array(24).fill(0).map((_,h)=>data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getUTCHours()===h; }).length);
   mkChart('cHoraVol',{type:'line',data:{labels:Array.from({length:24},(_,i)=>i+'h'),datasets:[{label:'Leads',data:hVol,borderColor:modoClaro?'#1565c0':'#6aabcc',backgroundColor:modoClaro?'rgba(21,101,192,.06)':'rgba(106,171,204,.06)',borderWidth:2,pointRadius:0,tension:.4,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()}}}}});
 }
 
@@ -1118,12 +1174,12 @@ function renderInsights(data) {
 
   // Mejor/peor hora
   const convH=Array(24).fill(0).map((_,h)=>{
-    const s=data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getHours()===h; });
+    const s=data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getUTCHours()===h; });
     return s.length?+(s.filter(d=>d.estado==='cliente').length/s.length*100).toFixed(1):0;
   });
   const mejorH=convH.indexOf(Math.max(...convH));
-  const peorD=data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getDay()===0; }).length;
-  const convDom=data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getDay()===0; });
+  const peorD=data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getUTCDay()===0; }).length;
+  const convDom=data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getUTCDay()===0; });
   const convDomPct=convDom.length?+(convDom.filter(d=>d.estado==='cliente').length/convDom.length*100).toFixed(2):0;
 
   const insights=[
@@ -1197,6 +1253,115 @@ function descargarPDF() {
     // Restaurar modo oscuro si era así
     if(eraModoOscuro) setTimeout(() => toggleMode(), 500);
   }, 300);
+}
+
+
+// ============ META ADS ============
+let metaData = [];
+
+function handleMetaFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    Papa.parse(e.target.result, {
+      header: true, skipEmptyLines: true,
+      complete(res) {
+        metaData = res.data;
+        renderMeta(metaData);
+      }
+    });
+  };
+  reader.readAsText(file);
+}
+
+function limpiarMeta() {
+  metaData = [];
+  document.getElementById('metaDashboard').style.display = 'none';
+  document.getElementById('metaNoData').style.display = 'block';
+}
+
+function renderMeta(rows) {
+  if (!rows || !rows.length) return;
+  document.getElementById('metaNoData').style.display = 'none';
+  document.getElementById('metaDashboard').style.display = 'block';
+
+  const toNum = v => parseFloat((String(v||'0')).replace(/[^0-9.]/g,'')) || 0;
+  const headers = Object.keys(rows[0]).map(h => h.toLowerCase());
+  const find = (...keys) => Object.keys(rows[0]).find(h => keys.some(k => h.toLowerCase().includes(k))) || '';
+
+  const colInv  = find('spend','inversion','importe','amount','gastado');
+  const colAlc  = find('reach','alcance');
+  const colImpr = find('impression','impresion');
+  const colLead = find('result','lead','resultado');
+  const colCPL  = find('cost per','cpl','costo por');
+  const colCamp = find('campaign','campaña','campaign name');
+
+  const totalInv  = rows.reduce((s,r) => s + toNum(r[colInv]),  0);
+  const totalAlc  = rows.reduce((s,r) => s + toNum(r[colAlc]),  0);
+  const totalImpr = rows.reduce((s,r) => s + toNum(r[colImpr]), 0);
+  const totalLeadsMeta = rows.reduce((s,r) => s + toNum(r[colLead]), 0);
+  const cplMeta = totalLeadsMeta > 0 ? totalInv / totalLeadsMeta : 0;
+
+  // CPL real = inversión total / total leads CRM del período
+  const totalCRM = allData.length;
+  const cplReal  = totalCRM > 0 ? totalInv / totalCRM : 0;
+
+  document.getElementById('kpiMeta').innerHTML = `
+    <div class="kpi a"><div class="kpi-lbl">Inversión Total</div><div class="kpi-val" style="font-size:22px">$${totalInv.toLocaleString('es-MX',{maximumFractionDigits:0})}</div><div class="kpi-sub">MXN · período cargado</div></div>
+    <div class="kpi o"><div class="kpi-lbl">CPL Meta (reportado)</div><div class="kpi-val" style="font-size:22px">$${cplMeta.toFixed(0)}</div><div class="kpi-sub">Costo por resultado Meta</div></div>
+    <div class="kpi b"><div class="kpi-lbl">CPL Real CRM</div><div class="kpi-val" style="font-size:22px">$${cplReal.toFixed(0)}</div><div class="kpi-sub">Inversión / leads reales</div></div>
+    <div class="kpi g"><div class="kpi-lbl">Alcance total</div><div class="kpi-val" style="font-size:22px">${(totalAlc/1000).toFixed(0)}K</div><div class="kpi-sub">${(totalImpr/1000).toFixed(0)}K impresiones</div></div>
+  `;
+
+  // Agrupar por campaña
+  const camps = {};
+  rows.forEach(r => {
+    const c = r[colCamp] || 'Sin nombre';
+    if (!camps[c]) camps[c] = {inv:0, leads:0, alc:0, impr:0};
+    camps[c].inv   += toNum(r[colInv]);
+    camps[c].leads += toNum(r[colLead]);
+    camps[c].alc   += toNum(r[colAlc]);
+    camps[c].impr  += toNum(r[colImpr]);
+  });
+  const campNames = Object.keys(camps).slice(0,8);
+  const campLabels = campNames.map(c => c.length > 20 ? c.slice(0,18)+'…' : c);
+
+  ['cMetaInversion','cMetaCPL','cMetaAlcance','cMetaLeads'].forEach(id => {
+    if (charts[id]) charts[id].destroy();
+  });
+
+  charts.cMetaInversion = new Chart(document.getElementById('cMetaInversion'), {
+    type:'bar',
+    data:{labels:campLabels, datasets:[{label:'Inversión $',data:campNames.map(c=>camps[c].inv),backgroundColor:C.gold(),borderRadius:3}]},
+    options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()}}}}
+  });
+
+  charts.cMetaCPL = new Chart(document.getElementById('cMetaCPL'), {
+    type:'bar',
+    data:{
+      labels:['CPL Meta (reportado)','CPL Real (CRM)'],
+      datasets:[{data:[+cplMeta.toFixed(0), +cplReal.toFixed(0)],backgroundColor:[C.oran(),C.blue()],borderRadius:3}]
+    },
+    options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()},ticks:{callback:v=>'$'+v}}}}
+  });
+
+  charts.cMetaAlcance = new Chart(document.getElementById('cMetaAlcance'), {
+    type:'bar',
+    data:{labels:campLabels, datasets:[
+      {label:'Alcance',data:campNames.map(c=>camps[c].alc),backgroundColor:C.blue(),borderRadius:3},
+      {label:'Impresiones',data:campNames.map(c=>camps[c].impr),backgroundColor:C.purp(),borderRadius:3}
+    ]},
+    options:{responsive:true,plugins:{legend:{labels:{color:'var(--text)'}},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()}}}}
+  });
+
+  charts.cMetaLeads = new Chart(document.getElementById('cMetaLeads'), {
+    type:'bar',
+    data:{
+      labels:['Leads Meta','Leads CRM reales'],
+      datasets:[{data:[totalLeadsMeta, totalCRM],backgroundColor:[C.gold(),C.green()],borderRadius:3}]
+    },
+    options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()}}}}
+  });
 }
 
 // ============ INIT ============

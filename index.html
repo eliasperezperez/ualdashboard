@@ -449,44 +449,106 @@ tr:hover td{background:var(--surface2);}
 
 <!-- META ADS -->
 <div class="section" id="tab-meta">
+
   <div id="metaNoData" style="padding:40px 0;text-align:center;">
     <div style="font-size:36px;margin-bottom:12px;">📱</div>
     <div style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);margin-bottom:8px;">MÓDULO META ADS</div>
     <div style="font-size:12px;color:var(--muted);max-width:460px;margin:0 auto 24px;line-height:1.8;">
-      Sube el reporte CSV de Meta Ads Manager para cruzar inversión, alcance e impresiones con los leads y conversiones reales del CRM.
+      Sube el reporte CSV de Meta Ads Manager para cruzar inversión y resultados de campaña con los leads reales del CRM.
     </div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:20px;max-width:480px;margin:0 auto;text-align:left;">
-      <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:12px;">PASOS PARA OBTENER EL CSV</div>
-      <div style="font-size:12px;color:var(--text);line-height:2;">
-        1. Entra a <strong>Meta Ads Manager → Informes</strong><br>
-        2. Filtra por el período que quieras analizar<br>
-        3. Selecciona columnas: <strong>Campaña, Fecha, Inversión, Alcance, Impresiones, Resultados, Costo por resultado</strong><br>
-        4. Exporta como <strong>CSV</strong><br>
-        5. Súbelo aquí abajo
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:20px;max-width:480px;margin:0 auto 20px;text-align:left;">
+      <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:12px;">CÓMO EXPORTAR EL CSV</div>
+      <div style="font-size:12px;color:var(--text);line-height:2.2;">
+        1. Ve a <strong>Meta Ads Manager → Campañas</strong><br>
+        2. Selecciona el período que quieras analizar<br>
+        3. Haz clic en el ícono de <strong>exportar ↗</strong> (arriba a la derecha)<br>
+        4. Elige <strong>Exportar tabla como CSV</strong><br>
+        5. Súbelo aquí abajo ↓
       </div>
     </div>
-    <div id="metaDropZone" style="margin:20px auto 0;max-width:480px;border:2px dashed var(--border);border-radius:6px;padding:24px;cursor:pointer;transition:border-color .2s;" 
+    <div id="metaDropZone"
+         style="margin:0 auto;max-width:480px;border:2px dashed var(--border);border-radius:6px;padding:28px;cursor:pointer;transition:border-color .2s;"
          onclick="document.getElementById('metaFileInput').click()"
          ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
          ondragleave="this.style.borderColor='var(--border)'"
          ondrop="event.preventDefault();this.style.borderColor='var(--border)';handleMetaFile(event.dataTransfer.files[0])">
       <input type="file" id="metaFileInput" accept=".csv" style="display:none" onchange="handleMetaFile(this.files[0])">
-      <div style="font-size:20px;margin-bottom:6px;">📂</div>
+      <div style="font-size:24px;margin-bottom:8px;">📂</div>
       <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);">CLICK O ARRASTRA TU CSV DE META ADS</div>
     </div>
   </div>
+
   <div id="metaDashboard" style="display:none;">
-    <div class="kpi-grid" id="kpiMeta"></div>
-    <div class="chart-grid">
-      <div class="cbox"><h3>Inversión por campaña</h3><canvas id="cMetaInversion"></canvas></div>
-      <div class="cbox"><h3>CPL Meta vs CPL Real CRM</h3><canvas id="cMetaCPL"></canvas></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;">Meta Ads · Período cargado</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;" id="metaPeriodo"></div>
+      </div>
+      <button class="btn" onclick="limpiarMeta()" style="font-size:9px;">✕ Quitar datos META</button>
     </div>
-    <div class="chart-grid">
-      <div class="cbox"><h3>Alcance e impresiones</h3><canvas id="cMetaAlcance"></canvas></div>
-      <div class="cbox"><h3>Leads Meta reportados vs Leads CRM reales</h3><canvas id="cMetaLeads"></canvas></div>
+
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">KPIs DE INVERSIÓN</div>
+    <div class="kpi-grid" id="kpiMeta" style="margin-bottom:6px;"></div>
+
+    <div style="background:var(--surface2);border-left:3px solid var(--blue);border-radius:0 4px 4px 0;padding:10px 14px;margin-bottom:20px;font-size:11px;color:var(--muted);line-height:1.7;">
+      <strong style="color:var(--text);">¿Qué son los "Resultados Meta"?</strong>
+      Meta reporta resultados según el objetivo de cada campaña: conversación de WhatsApp iniciada, formulario completado o clic. No todos equivalen al mismo nivel de intención. El CRM es la fuente de verdad del lead real.
     </div>
-    <div style="text-align:right;margin-top:8px;">
-      <button class="btn" onclick="limpiarMeta()" style="font-size:9px;">✕ Quitar datos Meta</button>
+
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">COMPARATIVA: META · CRM · VENTAS — por mes del período</div>
+    <div class="cbox" style="margin-bottom:14px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+        <div>
+          <div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:6px;">¿Qué es un "lead" según cada área?</div>
+          <div style="font-size:11px;color:var(--muted);line-height:2;">
+            <span style="color:var(--accent);">●</span> <strong>MKT:</strong> Resultado reportado por Meta (conversación o formulario)<br>
+            <span style="color:var(--blue);">●</span> <strong>CRM:</strong> Lead creado en Clientify ese mes (fuente de verdad)<br>
+            <span style="color:var(--green);">●</span> <strong>Ventas:</strong> Lead convertido a cliente ese mes
+          </div>
+        </div>
+        <div id="metaResumenComparativa" style="text-align:right;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);"></div>
+      </div>
+      <canvas id="cMetaComparativa" style="max-height:300px;"></canvas>
+      <div class="note" style="margin-top:10px;">El CRM puede tener leads que no provienen de Meta (orgánico, referidos, etc.). La diferencia CRM−Meta = leads no atribuidos a pauta.</div>
+    </div>
+
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">EMBUDO Y EFICIENCIA</div>
+    <div class="chart-grid" style="margin-bottom:14px;">
+      <div class="cbox">
+        <h3>Embudo: de impacto a cliente</h3>
+        <div id="metaEmbudo" style="padding:8px 0;"></div>
+        <div class="note">Porcentajes sobre impresiones totales del período.</div>
+      </div>
+      <div class="cbox">
+        <h3>CPL Meta reportado vs CPL Real CRM</h3>
+        <canvas id="cMetaCPL" style="max-height:240px;"></canvas>
+        <div class="note">CPL Real = inversión total ÷ leads reales en CRM del mismo período.</div>
+      </div>
+    </div>
+
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">INVERSIÓN POR CAMPAÑA</div>
+    <div class="cbox" style="margin-bottom:14px;">
+      <h3>Top campañas por inversión y resultados</h3>
+      <canvas id="cMetaInversion" style="max-height:300px;"></canvas>
+    </div>
+
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">DETALLE POR CAMPAÑA</div>
+    <div class="twrap" style="margin-bottom:14px;">
+      <table id="metaTabla">
+        <thead>
+          <tr>
+            <th>Campaña</th>
+            <th style="text-align:right;">Inversión MXN</th>
+            <th style="text-align:right;">Resultados</th>
+            <th style="text-align:right;">CPL</th>
+            <th style="text-align:right;">Alcance</th>
+            <th style="text-align:right;">Impresiones</th>
+            <th style="text-align:center;">Tipo</th>
+            <th style="text-align:center;">Estado</th>
+          </tr>
+        </thead>
+        <tbody id="metaTablaBody"></tbody>
+      </table>
     </div>
   </div>
 </div>
@@ -1302,85 +1364,304 @@ function renderMeta(rows) {
   document.getElementById('metaDashboard').style.display = 'block';
 
   const toNum = v => parseFloat((String(v||'0')).replace(/[^0-9.]/g,'')) || 0;
-  const headers = Object.keys(rows[0]).map(h => h.toLowerCase());
-  const find = (...keys) => Object.keys(rows[0]).find(h => keys.some(k => h.toLowerCase().includes(k))) || '';
 
-  const colInv  = find('spend','inversion','importe','amount','gastado');
-  const colAlc  = find('reach','alcance');
-  const colImpr = find('impression','impresion');
-  const colLead = find('result','lead','resultado');
-  const colCPL  = find('cost per','cpl','costo por');
-  const colCamp = find('campaign','campaña','campaign name');
+  // Columnas del CSV de Meta
+  const colInv    = 'Importe gastado (MXN)';
+  const colAlc    = 'Alcance';
+  const colImpr   = 'Impresiones';
+  const colRes    = 'Resultados';
+  const colCPR    = 'Costo por resultados';
+  const colCamp   = 'Nombre de la campaña';
+  const colInd    = 'Indicador de resultado';
+  const colEnt    = 'Entrega de la campaña';
+  const colInicio = 'Inicio del informe';
+  const colFin    = 'Fin del informe';
 
-  const totalInv  = rows.reduce((s,r) => s + toNum(r[colInv]),  0);
-  const totalAlc  = rows.reduce((s,r) => s + toNum(r[colAlc]),  0);
-  const totalImpr = rows.reduce((s,r) => s + toNum(r[colImpr]), 0);
-  const totalLeadsMeta = rows.reduce((s,r) => s + toNum(r[colLead]), 0);
-  const cplMeta = totalLeadsMeta > 0 ? totalInv / totalLeadsMeta : 0;
+  // Período
+  const fechaInicio = rows[0]?.[colInicio] || '';
+  const fechaFin    = rows[0]?.[colFin]    || '';
+  const fmtFecha = s => {
+    if (!s) return '';
+    const [y,m,d] = s.split('-');
+    const meses = ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    return `${d} ${meses[+m]} ${y}`;
+  };
+  document.getElementById('metaPeriodo').textContent =
+    `${fmtFecha(fechaInicio)} — ${fmtFecha(fechaFin)} · ${rows.length} campañas`;
 
-  // CPL real = inversión total / total leads CRM del período
-  const totalCRM = allData.length;
-  const cplReal  = totalCRM > 0 ? totalInv / totalCRM : 0;
+  // Filtrar solo campañas con gasto
+  const activas = rows.filter(r => toNum(r[colInv]) > 0);
 
+  // Totales
+  const totalInv   = rows.reduce((s,r) => s + toNum(r[colInv]),  0);
+  const totalRes   = rows.reduce((s,r) => s + toNum(r[colRes]),  0);
+  const totalImpr  = rows.reduce((s,r) => s + toNum(r[colImpr]), 0);
+  const totalAlc   = rows.reduce((s,r) => s + toNum(r[colAlc]),  0);
+  const cplMeta    = totalRes > 0 ? totalInv / totalRes : 0;
+
+  // CPL Real: inversión / leads CRM del mismo período
+  // Filtramos allData por el período del CSV
+  let crmPeriodo = allData;
+  if (fechaInicio && fechaFin) {
+    const dIni = new Date(fechaInicio + 'T00:00:00-06:00');
+    const dFin = new Date(fechaFin   + 'T23:59:59-06:00');
+    crmPeriodo = allData.filter(d => {
+      const dt = cdmxDate(d.creado);
+      return dt && dt >= dIni && dt <= dFin;
+    });
+  }
+  const totalCRM     = crmPeriodo.length;
+  const totalClientes = crmPeriodo.filter(d => d.estado === 'cliente').length;
+  const cplReal      = totalCRM > 0 ? totalInv / totalCRM : 0;
+  const cplCliente   = totalClientes > 0 ? totalInv / totalClientes : 0;
+
+  // ---- KPIs GLOBALES ----
   document.getElementById('kpiMeta').innerHTML = `
-    <div class="kpi a"><div class="kpi-lbl">Inversión Total</div><div class="kpi-val" style="font-size:22px">$${totalInv.toLocaleString('es-MX',{maximumFractionDigits:0})}</div><div class="kpi-sub">MXN · período cargado</div></div>
-    <div class="kpi o"><div class="kpi-lbl">CPL Meta (reportado)</div><div class="kpi-val" style="font-size:22px">$${cplMeta.toFixed(0)}</div><div class="kpi-sub">Costo por resultado Meta</div></div>
-    <div class="kpi b"><div class="kpi-lbl">CPL Real CRM</div><div class="kpi-val" style="font-size:22px">$${cplReal.toFixed(0)}</div><div class="kpi-sub">Inversión / leads reales</div></div>
-    <div class="kpi g"><div class="kpi-lbl">Alcance total</div><div class="kpi-val" style="font-size:22px">${(totalAlc/1000).toFixed(0)}K</div><div class="kpi-sub">${(totalImpr/1000).toFixed(0)}K impresiones</div></div>
+    <div class="kpi a">
+      <div class="kpi-lbl">Inversión Total</div>
+      <div class="kpi-val" style="font-size:24px;">$${totalInv.toLocaleString('es-MX',{maximumFractionDigits:0})}</div>
+      <div class="kpi-sub">MXN · ${activas.length} campañas activas</div>
+    </div>
+    <div class="kpi o">
+      <div class="kpi-lbl">CPL Meta (reportado)</div>
+      <div class="kpi-val" style="font-size:24px;">$${cplMeta.toFixed(0)}</div>
+      <div class="kpi-sub">Inversión ÷ resultados Meta</div>
+    </div>
+    <div class="kpi b">
+      <div class="kpi-lbl">CPL Real CRM</div>
+      <div class="kpi-val" style="font-size:24px;">$${cplReal.toFixed(0)}</div>
+      <div class="kpi-sub">Inversión ÷ ${totalCRM.toLocaleString()} leads reales</div>
+    </div>
+    <div class="kpi g">
+      <div class="kpi-lbl">Costo por Cliente</div>
+      <div class="kpi-val" style="font-size:24px;">$${cplCliente > 0 ? cplCliente.toFixed(0) : '—'}</div>
+      <div class="kpi-sub">Inversión ÷ ${totalClientes} clientes cerrados</div>
+    </div>
+    <div class="kpi r">
+      <div class="kpi-lbl">Alcance total</div>
+      <div class="kpi-val" style="font-size:24px;">${totalAlc >= 1000000 ? (totalAlc/1000000).toFixed(1)+'M' : (totalAlc/1000).toFixed(0)+'K'}</div>
+      <div class="kpi-sub">${(totalImpr/1000000).toFixed(1)}M impresiones</div>
+    </div>
   `;
 
-  // Agrupar por campaña
-  const camps = {};
-  rows.forEach(r => {
-    const c = r[colCamp] || 'Sin nombre';
-    if (!camps[c]) camps[c] = {inv:0, leads:0, alc:0, impr:0};
-    camps[c].inv   += toNum(r[colInv]);
-    camps[c].leads += toNum(r[colLead]);
-    camps[c].alc   += toNum(r[colAlc]);
-    camps[c].impr  += toNum(r[colImpr]);
-  });
-  const campNames = Object.keys(camps).slice(0,8);
-  const campLabels = campNames.map(c => c.length > 20 ? c.slice(0,18)+'…' : c);
+  // ---- COMPARATIVA META · CRM · VENTAS por mes ----
+  // Extraer meses del período del CSV
+  const mesesSet = new Set();
+  if (fechaInicio && fechaFin) {
+    const cur = new Date(fechaInicio + 'T12:00:00Z');
+    const fin = new Date(fechaFin   + 'T12:00:00Z');
+    while (cur <= fin) {
+      mesesSet.add(`${cur.getUTCFullYear()}-${String(cur.getUTCMonth()+1).padStart(2,'0')}`);
+      cur.setUTCMonth(cur.getUTCMonth() + 1);
+    }
+  }
+  const mesesPeriodo = [...mesesSet].sort();
 
-  ['cMetaInversion','cMetaCPL','cMetaAlcance','cMetaLeads'].forEach(id => {
-    if (charts[id]) charts[id].destroy();
+  // Meta: los resultados del CSV no vienen por mes, vienen como total del período.
+  // Distribuimos proporcionalmente según leads CRM por mes (aproximación honesta).
+  // Alternativa: mostrar solo total. Usamos total del CSV como barra única si hay un solo mes,
+  // o por mes del CRM si hay varios.
+  const crmPorMes = {};
+  const clientesPorMes = {};
+  mesesPeriodo.forEach(m => {
+    crmPorMes[m]      = allData.filter(d => getMonth(d.creado) === m).length;
+    clientesPorMes[m] = allData.filter(d => getMonth(d.creado) === m && d.estado === 'cliente').length;
   });
 
-  charts.cMetaInversion = new Chart(document.getElementById('cMetaInversion'), {
-    type:'bar',
-    data:{labels:campLabels, datasets:[{label:'Inversión $',data:campNames.map(c=>camps[c].inv),backgroundColor:C.gold(),borderRadius:3}]},
-    options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()}}}}
+  // Para Meta por mes: usamos los resultados totales distribuidos por peso CRM
+  const totalCRMperiodo = mesesPeriodo.reduce((s,m) => s + crmPorMes[m], 0);
+  const metaPorMes = {};
+  mesesPeriodo.forEach(m => {
+    metaPorMes[m] = totalCRMperiodo > 0
+      ? Math.round(totalRes * (crmPorMes[m] / totalCRMperiodo))
+      : 0;
   });
 
+  const lblsMeses = mesesPeriodo.map(monthLabel);
+
+  if (charts.cMetaComparativa) charts.cMetaComparativa.destroy();
+  charts.cMetaComparativa = new Chart(document.getElementById('cMetaComparativa'), {
+    type: 'bar',
+    data: {
+      labels: lblsMeses,
+      datasets: [
+        {
+          label: 'Resultados META (MKT)',
+          data: mesesPeriodo.map(m => metaPorMes[m]),
+          backgroundColor: modoClaro ? 'rgba(201,152,10,0.65)' : 'rgba(212,185,106,0.6)',
+          borderRadius: 3
+        },
+        {
+          label: 'Leads CRM (reales)',
+          data: mesesPeriodo.map(m => crmPorMes[m]),
+          backgroundColor: modoClaro ? 'rgba(21,101,192,0.65)' : 'rgba(106,171,204,0.6)',
+          borderRadius: 3
+        },
+        {
+          label: 'Clientes cerrados',
+          data: mesesPeriodo.map(m => clientesPorMes[m]),
+          backgroundColor: modoClaro ? 'rgba(46,125,82,0.65)' : 'rgba(90,184,154,0.6)',
+          borderRadius: 3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels: { color: 'var(--text)', boxWidth: 12, padding: 16 } },
+        tooltip: tipCfg()
+      },
+      scales: {
+        x: { grid: { color: gridCol() } },
+        y: { grid: { color: gridCol() } }
+      }
+    }
+  });
+
+  // Resumen comparativa
+  const diferencia = totalCRM - totalRes;
+  document.getElementById('metaResumenComparativa').innerHTML = `
+    <div style="margin-bottom:4px;"><span style="color:var(--accent);">${totalRes.toLocaleString()}</span> resultados Meta</div>
+    <div style="margin-bottom:4px;"><span style="color:var(--blue);">${totalCRM.toLocaleString()}</span> leads CRM</div>
+    <div style="margin-bottom:4px;"><span style="color:var(--green);">${totalClientes.toLocaleString()}</span> clientes</div>
+    <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
+      <span style="color:var(--muted);">No atribuidos a Meta: </span>
+      <span style="color:var(--text);font-weight:700;">${diferencia > 0 ? '+'+diferencia.toLocaleString() : diferencia.toLocaleString()}</span>
+    </div>
+  `;
+
+  // ---- EMBUDO ----
+  const tasaAlcance = totalImpr > 0 ? (totalAlc/totalImpr*100).toFixed(1) : 0;
+  const tasaRes     = totalImpr > 0 ? (totalRes/totalImpr*100).toFixed(2) : 0;
+  const tasaCRM     = totalImpr > 0 ? (totalCRM/totalImpr*100).toFixed(3) : 0;
+  const tasaCli     = totalImpr > 0 ? (totalClientes/totalImpr*100).toFixed(4) : 0;
+
+  const embudoSteps = [
+    { n: 1, lbl: 'Impresiones',       val: totalImpr,     pct: '100%',       color: '#6aabcc', w: 100 },
+    { n: 2, lbl: 'Alcance (personas)',  val: totalAlc,      pct: tasaAlcance+'%', color: '#d4b96a', w: Math.round(totalAlc/totalImpr*100) },
+    { n: 3, lbl: 'Resultados Meta',     val: totalRes,      pct: tasaRes+'%',  color: '#cc7a5a', w: Math.max(Math.round(totalRes/totalImpr*100*5),4) },
+    { n: 4, lbl: 'Leads reales CRM',   val: totalCRM,      pct: tasaCRM+'%',  color: '#1565c0', w: Math.max(Math.round(totalCRM/totalImpr*100*8),3) },
+    { n: 5, lbl: 'Clientes cerrados',  val: totalClientes, pct: tasaCli+'%',  color: '#2e7d52', w: Math.max(Math.round(totalClientes/totalImpr*100*15),2) },
+  ];
+
+  document.getElementById('metaEmbudo').innerHTML = embudoSteps.map(s => `
+    <div class="frow" style="margin-bottom:8px;">
+      <div class="fnum">${s.n}</div>
+      <div class="flbl" style="min-width:160px;">${s.lbl}</div>
+      <div class="fwrap">
+        <div class="fbar" style="background:${s.color};width:${Math.min(s.w,100)}%;min-width:60px;">
+          <span>${s.val.toLocaleString('es-MX')}</span>
+        </div>
+      </div>
+      <div class="fpct">${s.pct}</div>
+    </div>
+  `).join('');
+
+  // ---- CPL ----
+  if (charts.cMetaCPL) charts.cMetaCPL.destroy();
   charts.cMetaCPL = new Chart(document.getElementById('cMetaCPL'), {
-    type:'bar',
-    data:{
-      labels:['CPL Meta (reportado)','CPL Real (CRM)'],
-      datasets:[{data:[+cplMeta.toFixed(0), +cplReal.toFixed(0)],backgroundColor:[C.oran(),C.blue()],borderRadius:3}]
+    type: 'bar',
+    data: {
+      labels: ['CPL Meta
+(reportado)', 'CPL Real
+(CRM)', 'Costo por
+Cliente'],
+      datasets: [{
+        data: [+cplMeta.toFixed(0), +cplReal.toFixed(0), +cplCliente.toFixed(0)],
+        backgroundColor: [C.oran(), C.blue(), C.green()],
+        borderRadius: 4
+      }]
     },
-    options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()},ticks:{callback:v=>'$'+v}}}}
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { ...tipCfg(), callbacks: { label: ctx => '$' + ctx.raw.toLocaleString('es-MX') + ' MXN' } }
+      },
+      scales: {
+        x: { grid: { color: gridCol() } },
+        y: { grid: { color: gridCol() }, ticks: { callback: v => '$' + v.toLocaleString() } }
+      }
+    }
   });
 
-  charts.cMetaAlcance = new Chart(document.getElementById('cMetaAlcance'), {
-    type:'bar',
-    data:{labels:campLabels, datasets:[
-      {label:'Alcance',data:campNames.map(c=>camps[c].alc),backgroundColor:C.blue(),borderRadius:3},
-      {label:'Impresiones',data:campNames.map(c=>camps[c].impr),backgroundColor:C.purp(),borderRadius:3}
-    ]},
-    options:{responsive:true,plugins:{legend:{labels:{color:'var(--text)'}},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()}}}}
+  // ---- TOP CAMPAÑAS (inversión) ----
+  const topCamps = [...activas]
+    .sort((a,b) => toNum(b[colInv]) - toNum(a[colInv]))
+    .slice(0, 10);
+  const campLabels = topCamps.map(r => {
+    const n = r[colCamp] || 'Sin nombre';
+    return n.length > 28 ? n.slice(0,26)+'…' : n;
   });
 
-  charts.cMetaLeads = new Chart(document.getElementById('cMetaLeads'), {
-    type:'bar',
-    data:{
-      labels:['Leads Meta','Leads CRM reales'],
-      datasets:[{data:[totalLeadsMeta, totalCRM],backgroundColor:[C.gold(),C.green()],borderRadius:3}]
+  if (charts.cMetaInversion) charts.cMetaInversion.destroy();
+  charts.cMetaInversion = new Chart(document.getElementById('cMetaInversion'), {
+    type: 'bar',
+    data: {
+      labels: campLabels,
+      datasets: [
+        {
+          label: 'Inversión MXN',
+          data: topCamps.map(r => toNum(r[colInv])),
+          backgroundColor: C.gold(),
+          borderRadius: 3,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Resultados Meta',
+          data: topCamps.map(r => toNum(r[colRes])),
+          backgroundColor: C.blue(),
+          borderRadius: 3,
+          yAxisID: 'y2'
+        }
+      ]
     },
-    options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()}}}}
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels: { color: 'var(--text)', boxWidth: 10 } },
+        tooltip: tipCfg()
+      },
+      scales: {
+        x: { grid: { color: gridCol() } },
+        y:  { grid: { color: gridCol() }, ticks: { callback: v => '$'+v.toLocaleString() }, position: 'left' },
+        y2: { grid: { display: false }, position: 'right', ticks: { color: modoClaro ? '#1565c0' : '#6aabcc' } }
+      }
+    }
   });
+
+  // ---- TABLA DE CAMPAÑAS ----
+  const tipoLabel = ind => {
+    if (!ind) return '<span class="tag tb">Sin objetivo</span>';
+    if (ind.includes('leadgen')) return '<span class="tag tg">Formulario</span>';
+    if (ind.includes('messaging')) return '<span class="tag ta">WhatsApp</span>';
+    return '<span class="tag tb">Otro</span>';
+  };
+  const estadoLabel = ent => {
+    if (!ent || ent === 'not_delivering') return '<span class="tag tr">Inactiva</span>';
+    if (ent.toLowerCase().includes('activ')) return '<span class="tag tg">Activa</span>';
+    return '<span class="tag to">'+ent+'</span>';
+  };
+
+  const todosOrdenados = [...rows].sort((a,b) => toNum(b[colInv]) - toNum(a[colInv]));
+  document.getElementById('metaTablaBody').innerHTML = todosOrdenados.map(r => {
+    const inv = toNum(r[colInv]);
+    const res = toNum(r[colRes]);
+    const cpr = toNum(r[colCPR]);
+    return `<tr>
+      <td style="font-size:11px;max-width:220px;">${r[colCamp] || '—'}</td>
+      <td style="text-align:right;font-family:'Space Mono',monospace;font-size:11px;${inv>0?'color:var(--accent);':'color:var(--muted);'}">
+        ${inv > 0 ? '$'+inv.toLocaleString('es-MX',{maximumFractionDigits:0}) : '—'}
+      </td>
+      <td style="text-align:right;font-family:'Space Mono',monospace;font-size:11px;">${res > 0 ? res.toLocaleString() : '—'}</td>
+      <td style="text-align:right;font-family:'Space Mono',monospace;font-size:11px;">${cpr > 0 ? '$'+cpr.toFixed(0) : '—'}</td>
+      <td style="text-align:right;font-size:11px;color:var(--muted);">${toNum(r[colAlc]) > 0 ? toNum(r[colAlc]).toLocaleString('es-MX') : '—'}</td>
+      <td style="text-align:right;font-size:11px;color:var(--muted);">${toNum(r[colImpr]) > 0 ? toNum(r[colImpr]).toLocaleString('es-MX') : '—'}</td>
+      <td style="text-align:center;">${tipoLabel(r[colInd])}</td>
+      <td style="text-align:center;">${estadoLabel(r[colEnt])}</td>
+    </tr>`;
+  }).join('');
 }
-
-
 // ============ DIAGNÓSTICO ============
 function diagnostico() {
   console.log("=== DIAGNÓSTICO DE FECHAS ===");

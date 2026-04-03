@@ -1562,10 +1562,7 @@ function renderMeta(rows) {
   charts.cMetaCPL = new Chart(document.getElementById('cMetaCPL'), {
     type: 'bar',
     data: {
-      labels: ['CPL Meta
-(reportado)', 'CPL Real
-(CRM)', 'Costo por
-Cliente'],
+      labels: ['CPL Meta (reportado)', 'CPL Real (CRM)', 'Costo por Cliente'],
       datasets: [{
         data: [+cplMeta.toFixed(0), +cplReal.toFixed(0), +cplCliente.toFixed(0)],
         backgroundColor: [C.oran(), C.blue(), C.green()],

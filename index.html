@@ -7,7 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
   --bg:#0f1520; --surface:#161f2e; --surface2:#1c2538; --border:#243044;
@@ -23,7 +23,7 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;transition:background 0.3s,color 0.3s;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;transition:background 0.3s,color 0.3s;}
 
 /* HEADER */
 .header{
@@ -32,20 +32,20 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   position:sticky;top:0;background:var(--bg);z-index:200;
   flex-wrap:wrap;gap:10px;transition:background 0.3s;
 }
-.logo{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--accent);}
+.logo{font-size:14px;font-weight:700;color:var(--accent);}
 .logo span{color:var(--muted);font-weight:400;font-size:11px;display:block;margin-top:2px;}
 .header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .pill{
   display:flex;align-items:center;gap:6px;
-  font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);
+  font-size:10px;font-weight:500;color:var(--muted);
 }
 .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);}
 .dot.live{background:var(--green);box-shadow:0 0 5px var(--green);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .btn{
   padding:7px 14px;border-radius:4px;border:1px solid var(--border);
-  background:transparent;color:var(--muted);font-family:'Space Mono',monospace;
-  font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;
+  background:transparent;color:var(--muted);
+  font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;
 }
 .btn:hover{border-color:var(--accent);color:var(--accent);}
 .btn.primary{background:var(--accent);color:#1a1200;border-color:var(--accent);}
@@ -60,12 +60,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:var(--bg);
   transition:background 0.3s;
 }
-.filter-label{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;margin-right:4px;}
+.filter-label{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:1px;margin-right:4px;}
 .filter-sep{width:1px;height:20px;background:var(--border);margin:0 6px;}
 .filter-btn{
   padding:4px 10px;border-radius:3px;border:1px solid var(--border);
-  background:transparent;color:var(--muted);font-family:'Space Mono',monospace;
-  font-size:9px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;
+  background:transparent;color:var(--muted);
+  font-size:9px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;
 }
 .filter-btn:hover{border-color:var(--blue);color:var(--blue);}
 .filter-btn.active{background:var(--accent);color:#1a1200;border-color:var(--accent);}
@@ -78,13 +78,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .light .overlay{background:rgba(255,255,255,.92);}
 .overlay.show{display:flex;}
 .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
-.overlay h2{font-family:'Space Mono',monospace;font-size:14px;color:var(--accent);}
+.overlay h2{font-size:14px;font-weight:700;color:var(--accent);}
 .overlay p{font-size:12px;color:var(--muted);text-align:center;max-width:360px;}
 
 /* TABS */
 .tabs{display:flex;padding:0 28px;border-bottom:1px solid var(--border);overflow-x:auto;background:var(--bg);transition:background .3s;}
 .tab{
-  padding:11px 16px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;
+  padding:11px 16px;font-size:10px;font-weight:700;
   color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;
   white-space:nowrap;transition:all .2s;
 }
@@ -102,12 +102,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
   border-left:3px solid var(--accent);
 }
-.semana-banner h2{font-family:'Space Mono',monospace;font-size:12px;color:var(--accent);}
+.semana-banner h2{font-size:12px;font-weight:700;color:var(--accent);}
 .semana-banner p{font-size:11px;color:var(--muted);margin-top:3px;}
 .semana-stats{display:flex;gap:20px;flex-wrap:wrap;}
 .semana-stat{text-align:center;}
-.semana-stat .val{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--text);}
-.semana-stat .lbl{font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:.5px;}
+.semana-stat .val{font-size:20px;font-weight:700;color:var(--text);}
+.semana-stat .lbl{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.5px;}
 .trend-up{color:var(--green)!important;}
 .trend-dn{color:var(--red)!important;}
 
@@ -120,36 +120,36 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .kpi.g::before{background:var(--green);}
 .kpi.r::before{background:var(--red);}
 .kpi.o::before{background:var(--orange);}
-.kpi-lbl{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
-.kpi-val{font-family:'Space Mono',monospace;font-size:28px;font-weight:700;line-height:1;}
+.kpi-lbl{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.kpi-val{font-size:28px;font-weight:700;line-height:1;}
 .kpi.a .kpi-val{color:var(--accent);}
 .kpi.b .kpi-val{color:var(--blue);}
 .kpi.g .kpi-val{color:var(--green);}
 .kpi.r .kpi-val{color:var(--red);}
 .kpi.o .kpi-val{color:var(--orange);}
 .kpi-sub{font-size:10px;color:var(--muted);margin-top:5px;}
-.kpi-trend{font-family:'Space Mono',monospace;font-size:10px;margin-top:4px;}
+.kpi-trend{font-size:10px;font-weight:500;margin-top:4px;}
 
 /* CHARTS */
 .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
 .chart-grid.w1{grid-template-columns:1fr;}
 .chart-grid.w3{grid-template-columns:1fr 1fr 1fr;}
 .cbox{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:18px;}
-.cbox h3{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
+.cbox h3{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
 canvas{max-height:260px;}
 .cbox .note{font-size:10px;color:var(--muted);margin-top:8px;font-style:italic;}
 
 /* TABLE */
 .twrap{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;overflow-x:auto;margin-bottom:14px;}
-.thead{padding:12px 16px;border-bottom:1px solid var(--border);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.thead{padding:12px 16px;border-bottom:1px solid var(--border);font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
 table{width:100%;border-collapse:collapse;min-width:480px;}
-th{text-align:left;padding:9px 14px;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--surface2);}
+th{text-align:left;padding:9px 14px;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--surface2);}
 td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:12px;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:var(--surface2);}
 
 /* TAGS */
-.tag{display:inline-block;padding:2px 7px;border-radius:3px;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;}
+.tag{display:inline-block;padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700;}
 .tg{background:rgba(90,184,154,.12);color:var(--green);}
 .tr{background:rgba(204,95,106,.12);color:var(--red);}
 .ta{background:rgba(212,185,106,.12);color:var(--accent);}
@@ -159,11 +159,11 @@ tr:hover td{background:var(--surface2);}
 /* FUNNEL */
 .funnel{display:flex;flex-direction:column;gap:5px;}
 .frow{display:flex;align-items:center;gap:10px;}
-.fnum{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);min-width:18px;}
+.fnum{font-size:10px;font-weight:500;color:var(--muted);min-width:18px;}
 .flbl{font-size:11px;color:var(--muted);min-width:150px;text-align:right;}
 .fwrap{flex:1;}
-.fbar{height:34px;border-radius:3px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:#fff;min-width:30px;}
-.fpct{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);min-width:42px;}
+.fbar{height:34px;border-radius:3px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:10px;font-weight:700;color:#fff;min-width:30px;}
+.fpct{font-size:10px;font-weight:500;color:var(--muted);min-width:42px;}
 
 /* INSIGHT CARDS */
 .igrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
@@ -172,14 +172,14 @@ tr:hover td{background:var(--surface2);}
 .icard.io{border-left-color:var(--green);}
 .icard.iw{border-left-color:var(--accent);}
 .icard.ii{border-left-color:var(--blue);}
-.itype{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
+.itype{font-size:8px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
 .icard.ic .itype{color:var(--red);}
 .icard.io .itype{color:var(--green);}
 .icard.iw .itype{color:var(--accent);}
 .icard.ii .itype{color:var(--blue);}
 .itit{font-size:12px;font-weight:600;margin-bottom:5px;line-height:1.3;}
 .ibody{font-size:11px;color:var(--muted);line-height:1.6;}
-.inum{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;margin:5px 0 3px;}
+.inum{font-size:20px;font-weight:700;margin:5px 0 3px;}
 .icard.ic .inum{color:var(--red);}
 .icard.io .inum{color:var(--green);}
 .icard.iw .inum{color:var(--accent);}
@@ -187,7 +187,7 @@ tr:hover td{background:var(--surface2);}
 
 /* HEATMAP */
 .hmap{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;overflow-x:auto;min-width:500px;}
-.hcell{height:44px;border-radius:2px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:default;transition:transform .15s;font-family:'Space Mono',monospace;}
+.hcell{height:44px;border-radius:2px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:default;transition:transform .15s;}
 .hcell:hover{transform:scale(1.15);z-index:10;position:relative;}
 
 /* EMPTY STATE */
@@ -207,7 +207,7 @@ tr:hover td{background:var(--surface2);}
   .pdf-header { display:flex !important; align-items:center; justify-content:space-between;
     padding:16px 24px; border-bottom:2px solid #1565c0; margin-bottom:20px; }
   .pdf-header img { height:36px; }
-  .pdf-header-right { text-align:right; font-family:'Space Mono',monospace; font-size:10px; color:#5a6e85; }
+  .pdf-header-right { text-align:right;  font-size:10px; color:#5a6e85; }
   .pdf-header-right strong { color:#1a2433; display:block; font-size:12px; margin-bottom:2px; }
 
   /* Solo mostrar la sección activa */
@@ -230,7 +230,7 @@ tr:hover td{background:var(--surface2);}
 
   @page { margin:1cm; size:A4 landscape; }
 }
-.empty h3{font-family:'Space Mono',monospace;font-size:13px;margin-bottom:6px;}
+.empty h3{font-size:13px;font-weight:700;margin-bottom:6px;}
 .empty p{font-size:12px;}
 
 ::-webkit-scrollbar{width:4px;height:4px;}
@@ -288,7 +288,7 @@ tr:hover td{background:var(--surface2);}
       <div class="dot" id="dot"></div>
       <span id="dotTxt">Conectando...</span>
     </div>
-    <div id="lastUpdate" style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);"></div>
+    <div id="lastUpdate" style="font-size:9px;color:var(--muted);"></div>
     <button class="btn" id="modeBtn" onclick="toggleMode()">🌙 MODO ANÁLISIS</button>
     <button class="btn" onclick="descargarPDF()" style="border-color:var(--blue);color:var(--blue);">⬇ DESCARGAR PDF</button>
     <button class="btn" onclick="diagnostico()" style="border-color:var(--orange);color:var(--orange);">🔍 DIAG</button>
@@ -327,8 +327,8 @@ tr:hover td{background:var(--surface2);}
 <div class="section active" id="tab-general">
   <div class="kpi-grid" id="kpiGeneral"></div>
   <div class="chart-grid">
-    <div class="cbox"><h3>Leads por mes</h3><canvas id="cLeadsMes"></canvas></div>
-    <div class="cbox"><h3>Conversión mensual (%) — vendedores activos</h3><canvas id="cConvMes"></canvas></div>
+    <div class="cbox"><h3 id="hLeadsMes">Leads por mes</h3><canvas id="cLeadsMes"></canvas></div>
+    <div class="cbox"><h3 id="hConvMes">Conversión mensual (%) — vendedores activos</h3><canvas id="cConvMes"></canvas></div>
   </div>
   <div class="chart-grid">
     <div class="cbox"><h3>Estados</h3><canvas id="cEstados"></canvas></div>
@@ -452,12 +452,12 @@ tr:hover td{background:var(--surface2);}
 
   <div id="metaNoData" style="padding:40px 0;text-align:center;">
     <div style="font-size:36px;margin-bottom:12px;">📱</div>
-    <div style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);margin-bottom:8px;">MÓDULO META ADS</div>
+    <div style="font-size:13px;color:var(--accent);margin-bottom:8px;">MÓDULO META ADS</div>
     <div style="font-size:12px;color:var(--muted);max-width:460px;margin:0 auto 24px;line-height:1.8;">
       Sube el reporte CSV de Meta Ads Manager para cruzar inversión y resultados de campaña con los leads reales del CRM.
     </div>
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:20px;max-width:480px;margin:0 auto 20px;text-align:left;">
-      <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:12px;">CÓMO EXPORTAR EL CSV</div>
+      <div style="font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:12px;">CÓMO EXPORTAR EL CSV</div>
       <div style="font-size:12px;color:var(--text);line-height:2.2;">
         1. Ve a <strong>Meta Ads Manager → Campañas</strong><br>
         2. Selecciona el período que quieras analizar<br>
@@ -474,20 +474,20 @@ tr:hover td{background:var(--surface2);}
          ondrop="event.preventDefault();this.style.borderColor='var(--border)';handleMetaFile(event.dataTransfer.files[0])">
       <input type="file" id="metaFileInput" accept=".csv" style="display:none" onchange="handleMetaFile(this.files[0])">
       <div style="font-size:24px;margin-bottom:8px;">📂</div>
-      <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);">CLICK O ARRASTRA TU CSV DE META ADS</div>
+      <div style="font-size:10px;color:var(--muted);">CLICK O ARRASTRA TU CSV DE META ADS</div>
     </div>
   </div>
 
   <div id="metaDashboard" style="display:none;">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px;">
       <div>
-        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;">Meta Ads · Período cargado</div>
+        <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;">Meta Ads · Período cargado</div>
         <div style="font-size:11px;color:var(--muted);margin-top:3px;" id="metaPeriodo"></div>
       </div>
       <button class="btn" onclick="limpiarMeta()" style="font-size:9px;">✕ Quitar datos META</button>
     </div>
 
-    <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">KPIs DE INVERSIÓN</div>
+    <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">KPIs DE INVERSIÓN</div>
     <div class="kpi-grid" id="kpiMeta" style="margin-bottom:6px;"></div>
 
     <div style="background:var(--surface2);border-left:3px solid var(--blue);border-radius:0 4px 4px 0;padding:10px 14px;margin-bottom:20px;font-size:11px;color:var(--muted);line-height:1.7;">
@@ -495,7 +495,7 @@ tr:hover td{background:var(--surface2);}
       Meta reporta resultados según el objetivo de cada campaña: conversación de WhatsApp iniciada, formulario completado o clic. No todos equivalen al mismo nivel de intención. El CRM es la fuente de verdad del lead real.
     </div>
 
-    <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">COMPARATIVA: META · CRM · VENTAS — por mes del período</div>
+    <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">COMPARATIVA: META · CRM · VENTAS — por mes del período</div>
     <div class="cbox" style="margin-bottom:14px;">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
         <div>
@@ -506,13 +506,13 @@ tr:hover td{background:var(--surface2);}
             <span style="color:var(--green);">●</span> <strong>Ventas:</strong> Lead convertido a cliente ese mes
           </div>
         </div>
-        <div id="metaResumenComparativa" style="text-align:right;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);"></div>
+        <div id="metaResumenComparativa" style="text-align:right;font-size:10px;color:var(--muted);"></div>
       </div>
       <canvas id="cMetaComparativa" style="max-height:300px;"></canvas>
       <div class="note" style="margin-top:10px;">El CRM puede tener leads que no provienen de Meta (orgánico, referidos, etc.). La diferencia CRM−Meta = leads no atribuidos a pauta.</div>
     </div>
 
-    <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">EMBUDO Y EFICIENCIA</div>
+    <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">EMBUDO Y EFICIENCIA</div>
     <div class="chart-grid" style="margin-bottom:14px;">
       <div class="cbox">
         <h3>Embudo: de impacto a cliente</h3>
@@ -526,13 +526,13 @@ tr:hover td{background:var(--surface2);}
       </div>
     </div>
 
-    <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">INVERSIÓN POR CAMPAÑA</div>
+    <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">INVERSIÓN POR CAMPAÑA</div>
     <div class="cbox" style="margin-bottom:14px;">
       <h3>Top campañas por inversión y resultados</h3>
       <canvas id="cMetaInversion" style="max-height:300px;"></canvas>
     </div>
 
-    <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">DETALLE POR CAMPAÑA</div>
+    <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">DETALLE POR CAMPAÑA</div>
     <div class="twrap" style="margin-bottom:14px;">
       <table id="metaTabla">
         <thead>
@@ -556,7 +556,7 @@ tr:hover td{background:var(--surface2);}
 <!-- INSIGHTS -->
 <div class="section" id="tab-insights">
   <div style="margin-bottom:16px;">
-    <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Hallazgos del período seleccionado</div>
+    <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Hallazgos del período seleccionado</div>
     <div style="font-size:11px;color:var(--muted);">Análisis cruzado automático basado en los datos cargados.</div>
   </div>
   <div class="igrid" id="insightGrid"></div>
@@ -604,6 +604,23 @@ function mkChart(id, cfg) {
   const el = document.getElementById(id);
   if (!el) return;
   charts[id] = new Chart(el, cfg);
+}
+
+// ============ NORMALIZACIÓN DE ESTADOS ============
+// Mapea etiquetas del CRM (en cualquier idioma/formato) a valores canónicos Title Case.
+// Se aplica al cargar datos crudos del CSV, antes de cualquier agrupación o conteo.
+function normalizeEstado(raw) {
+  if (!raw) return '';
+  const s = raw.trim().toLowerCase();
+  const map = {
+    'cliente': 'Cliente', 'client': 'Cliente',
+    'lead perdido': 'Lead Perdido', 'lost lead': 'Lead Perdido', 'lost': 'Lead Perdido',
+    'en oportunidad': 'En Oportunidad', 'in-deal': 'En Oportunidad',
+    'lead fría': 'Lead Frío', 'lead frío': 'Lead Frío', 'lead frio': 'Lead Frío', 'cold-lead': 'Lead Frío',
+    'lead caliente': 'Lead Caliente', 'hot lead': 'Lead Caliente',
+    'lead tibio': 'Lead Tibio', 'warm lead': 'Lead Tibio',
+  };
+  return map[s] || raw.trim();
 }
 
 // ============ HELPERS ============
@@ -714,6 +731,24 @@ function getFiltered() {
   // mes
   return allData.filter(d => getMonth(d.creado) === filtroActivo);
 }
+// Devuelve los datos del período anterior al filtro activo (para comparativas en insights).
+function getPreviousPeriodData() {
+  if (filtroActivo === 'semana-actual') {
+    const [monB, sunB] = getWeekRange(-1);
+    return allData.filter(d => { const dt = cdmxDate(d.creado); return dt && dt >= monB && dt <= sunB; });
+  }
+  if (filtroActivo === 'semana-ant') {
+    const [monC, sunC] = getWeekRange(-2);
+    return allData.filter(d => { const dt = cdmxDate(d.creado); return dt && dt >= monC && dt <= sunC; });
+  }
+  if (filtroActivo.match(/^\d{4}-\d{2}$/)) {
+    const [y, m] = filtroActivo.split('-').map(Number);
+    const prevM = m === 1 ? `${y-1}-12` : `${y}-${String(m-1).padStart(2,'0')}`;
+    return allData.filter(d => getMonth(d.creado) === prevM);
+  }
+  return [];
+}
+
 
 let mostrar2025 = true;
 
@@ -777,7 +812,7 @@ async function loadData() {
             allData = results.data.map(r => ({
               id:        r['ID']||r['id']||'',
               nombre:    r['nombre']||'',
-              estado:    (r['estado']||'').toLowerCase().trim(),
+              estado:    normalizeEstado(r['estado']||''),
               prop:      r['propietario']||'',
               origen:    r['origen_contacto']||'',
               canal:     r['canal_online']||'',
@@ -823,7 +858,7 @@ function showEmpty() {
 // ============ PERDIDOS ============
 function renderPerdidos(data) {
   const total = data.length;
-  const perdidos = data.filter(d => d.estado === 'lead perdido');
+  const perdidos = data.filter(d => d.estado === 'Lead Perdido');
   const np = perdidos.length;
   const sinContacto = perdidos.filter(d => d.etiq.toLowerCase().includes('sin contacto alguno')).length;
   const pct = total ? (np/total*100).toFixed(1) : 0;
@@ -904,10 +939,10 @@ function renderAll(data) {
 
 // ============ GENERAL ============
 function renderGeneral(data) {
-  const total=data.length, cli=(data.filter(d=>d.estado==='cliente')).length,
-        perd=(data.filter(d=>d.estado==='lead perdido')).length,
-        op=(data.filter(d=>d.estado==='en oportunidad')).length,
-        frio=(data.filter(d=>d.estado==='lead frío')).length;
+  const total=data.length, cli=(data.filter(d=>d.estado==='Cliente')).length,
+        perd=(data.filter(d=>d.estado==='Lead Perdido')).length,
+        op=(data.filter(d=>d.estado==='En Oportunidad')).length,
+        frio=(data.filter(d=>d.estado==='Lead Frío')).length;
   const conv=total?(cli/total*100).toFixed(2):0;
 
   document.getElementById('kpiGeneral').innerHTML=`
@@ -918,23 +953,62 @@ function renderGeneral(data) {
     <div class="kpi o"><div class="kpi-lbl">Lead Frío</div><div class="kpi-val">${frio.toLocaleString()}</div><div class="kpi-sub">Sin actividad</div></div>
   `;
 
-  const mesMap={}, cliMap={};
-  allData.forEach(d => { // siempre sobre todos para la línea de tiempo
-    const m=getMonth(d.creado); if(!m) return;
-    mesMap[m]=(mesMap[m]||0)+1;
-    if(d.estado==='cliente') cliMap[m]=(cliMap[m]||0)+1;
-  });
-  const meses=Object.keys(mesMap).sort();
-  const lbls=meses.map(monthLabel);
+  // Detección de tipo de filtro: semana vs mes/todos
+  const esSemana = filtroActivo === 'semana-actual' || filtroActivo === 'semana-ant';
 
-  mkChart('cLeadsMes',{type:'bar',data:{labels:lbls,datasets:[{label:'Leads',data:meses.map(m=>mesMap[m]),backgroundColor:C.blue(),borderColor:'transparent',borderWidth:0,borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()}}}}});
+  if (esSemana) {
+    // ── MODO SEMANA: últimas 8 semanas, destacando la seleccionada ──────────
+    const offsetBase = filtroActivo === 'semana-ant' ? -1 : 0;
+    const semLabels=[], semLeads=[], semConv=[], semBg=[];
+    const fmtSem = d => {
+      const cdmx = new Date(d.getTime() - 6*3600000);
+      return cdmx.toLocaleDateString('es-MX',{day:'2-digit',month:'short'});
+    };
+    for (let i = -7; i <= 0; i++) {
+      const relOffset = offsetBase + i; // offset respecto a la semana seleccionada
+      const absOffset = i; // offset desde semana actual siempre
+      const [mon, sun] = getWeekRange(absOffset);
+      const semD = allData.filter(d => { const dt = cdmxDate(d.creado); return dt && dt >= mon && dt <= sun; });
+      semLabels.push(fmtSem(mon));
+      semLeads.push(semD.length);
+      const dv = semD.filter(d => VENDEDORES.includes(d.prop));
+      semConv.push(dv.length ? +(dv.filter(d=>d.estado==='Cliente').length/dv.length*100).toFixed(2) : null);
+      // Destacar la semana seleccionada
+      const isSelected = (filtroActivo === 'semana-actual' && absOffset === 0)
+                      || (filtroActivo === 'semana-ant' && absOffset === -1);
+      semBg.push(isSelected
+        ? (modoClaro ? 'rgba(201,152,10,0.9)' : 'rgba(212,185,106,0.9)')
+        : C.blue());
+    }
 
-  // Conversión solo vendedores por mes
-  const convMes=meses.map(m=>{
-    const dv=allData.filter(d=>getMonth(d.creado)===m&&VENDEDORES.includes(d.prop));
-    return dv.length?+(dv.filter(d=>d.estado==='cliente').length/dv.length*100).toFixed(2):null;
-  });
-  mkChart('cConvMes',{type:'line',data:{labels:lbls,datasets:[{label:'Conv%',data:convMes,borderColor:modoClaro?'#2e7d52':'#5ab89a',backgroundColor:modoClaro?'rgba(46,125,82,.08)':'rgba(90,184,154,.08)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:modoClaro?'#2e7d52':'#5ab89a',tension:.4,fill:true,spanGaps:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()},ticks:{callback:v=>v+'%'}}}}});
+    document.getElementById('hLeadsMes').textContent = 'Leads por Semana — últimas 8 semanas';
+    document.getElementById('hConvMes').textContent  = 'Conversión % por Semana — vendedores activos';
+
+    mkChart('cLeadsMes',{type:'bar',data:{labels:semLabels,datasets:[{label:'Leads',data:semLeads,backgroundColor:semBg,borderWidth:0,borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()}}}}});
+    mkChart('cConvMes',{type:'line',data:{labels:semLabels,datasets:[{label:'Conv%',data:semConv,borderColor:modoClaro?'#2e7d52':'#5ab89a',backgroundColor:modoClaro?'rgba(46,125,82,.08)':'rgba(90,184,154,.08)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:modoClaro?'#2e7d52':'#5ab89a',tension:.3,fill:true,spanGaps:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()},ticks:{callback:v=>v+'%'}}}}});
+
+  } else {
+    // ── MODO MES/TODOS: gráficas mensuales (comportamiento original) ─────────
+    const mesMap={}, cliMap={};
+    allData.forEach(d => {
+      const m=getMonth(d.creado); if(!m) return;
+      mesMap[m]=(mesMap[m]||0)+1;
+      if(d.estado==='Cliente') cliMap[m]=(cliMap[m]||0)+1;
+    });
+    const meses=Object.keys(mesMap).sort();
+    const lbls=meses.map(monthLabel);
+
+    document.getElementById('hLeadsMes').textContent = 'Leads por mes';
+    document.getElementById('hConvMes').textContent  = 'Conversión mensual (%) — vendedores activos';
+
+    mkChart('cLeadsMes',{type:'bar',data:{labels:lbls,datasets:[{label:'Leads',data:meses.map(m=>mesMap[m]),backgroundColor:C.blue(),borderColor:'transparent',borderWidth:0,borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()}}}}});
+
+    const convMes=meses.map(m=>{
+      const dv=allData.filter(d=>getMonth(d.creado)===m&&VENDEDORES.includes(d.prop));
+      return dv.length?+(dv.filter(d=>d.estado==='Cliente').length/dv.length*100).toFixed(2):null;
+    });
+    mkChart('cConvMes',{type:'line',data:{labels:lbls,datasets:[{label:'Conv%',data:convMes,borderColor:modoClaro?'#2e7d52':'#5ab89a',backgroundColor:modoClaro?'rgba(46,125,82,.08)':'rgba(90,184,154,.08)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:modoClaro?'#2e7d52':'#5ab89a',tension:.4,fill:true,spanGaps:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()},ticks:{callback:v=>v+'%'}}}}});
+  }
 
   const estadoMap={};
   data.forEach(d=>{estadoMap[d.estado]=(estadoMap[d.estado]||0)+1;});
@@ -963,8 +1037,8 @@ function renderSemana() {
   const [mon,sun] = filtroActivo==='semana-ant' ? [monB,sunB] : [monA,sunA];
   document.getElementById('sRango').textContent=`${fmt(mon)} – ${fmt(sun)}`;
 
-  const tl=semData.length, cl=semData.filter(d=>d.estado==='cliente').length, pl=semData.filter(d=>d.estado==='lead perdido').length;
-  const tl2=semComp.length, cl2=semComp.filter(d=>d.estado==='cliente').length;
+  const tl=semData.length, cl=semData.filter(d=>d.estado==='Cliente').length, pl=semData.filter(d=>d.estado==='Lead Perdido').length;
+  const tl2=semComp.length, cl2=semComp.filter(d=>d.estado==='Cliente').length;
   const convS=tl?+(cl/tl*100).toFixed(2):0, convS2=tl2?+(cl2/tl2*100).toFixed(2):0;
   const diffPct=(tl2?((tl-tl2)/tl2*100):0).toFixed(0);
   const diffC=(cl-cl2);
@@ -976,25 +1050,39 @@ function renderSemana() {
     <div class="semana-stat"><div class="kpi-val">${pl}</div><div class="lbl">PERDIDOS</div></div>
   `;
 
-  // KPIs semana
+  // ── KPIs semana ──────────────────────────────────────────────────────────
+  // Denominador de contactación: leads asignados a vendedor ACTIVO (VENDEDORES).
+  // Excluye telemarketing (TRAPPING) y jefatura (EXCLUIDOS), que no trabajan cierre.
+  // "Contactado" = tiene campo ultimo_contacto posterior a creado (calcTppc > 0).
+  // Proxy de contacto humano: no distingue automatizaciones del CRM de contacto real.
   const vd=semData.filter(d=>VENDEDORES.includes(d.prop));
   const contactados=vd.filter(d=>{const t=calcTppc(d);return t&&t>0;}).length;
+  const contactadoPct=vd.length?+(contactados/vd.length*100).toFixed(1):0;
+
+  // "Sin asignar": leads del período sin responsable reconocido (no VENDEDORES, TRAPPING ni EXCLUIDOS).
+  // Son leads que quedaron huérfanos en el CRM: sin asesor activo que los trabaje.
+  const sinAsignar=semData.filter(d=>!d.prop||(!VENDEDORES.includes(d.prop)&&!TRAPPING.includes(d.prop)&&!EXCLUIDOS.includes(d.prop))).length;
+  const pctSinAsignar=tl?+(sinAsignar/tl*100).toFixed(1):0;
+
+  // "Sin contacto" vía etiqueta CRM (registro explícito de sin contacto alguno)
   const sinContacto=semData.filter(d=>d.etiq.toLowerCase().includes('sin contacto alguno')).length;
+
   document.getElementById('kpiSemana').innerHTML=`
     <div class="kpi a"><div class="kpi-lbl">Leads</div><div class="kpi-val">${tl}</div><div class="kpi-sub">Total semana</div></div>
-    <div class="kpi b"><div class="kpi-lbl">Contactación</div><div class="kpi-val">${vd.length?+(contactados/vd.length*100).toFixed(1):0}%</div><div class="kpi-sub">${contactados} de ${vd.length}</div></div>
+    <div class="kpi b"><div class="kpi-lbl">Contactación</div><div class="kpi-val">${contactadoPct}%</div><div class="kpi-sub">${contactados} de ${vd.length} asignados contactados</div></div>
     <div class="kpi g"><div class="kpi-lbl">Clientes</div><div class="kpi-val">${cl}</div><div class="kpi-sub">Conv: ${convS}%</div></div>
     <div class="kpi r"><div class="kpi-lbl">Perdidos</div><div class="kpi-val">${pl}</div><div class="kpi-sub">${tl?(pl/tl*100).toFixed(1):0}%</div></div>
-    <div class="kpi o"><div class="kpi-lbl">Sin contacto</div><div class="kpi-val">${sinContacto}</div><div class="kpi-sub">${tl?(sinContacto/tl*100).toFixed(1):0}%</div></div>
+    <div class="kpi o"><div class="kpi-lbl">Sin Asignar</div><div class="kpi-val">${sinAsignar}</div><div class="kpi-sub">${pctSinAsignar}% del total · sin asesor activo</div></div>
+    <div class="kpi b"><div class="kpi-lbl">Sin Contacto</div><div class="kpi-val">${sinContacto}</div><div class="kpi-sub">${tl?(sinContacto/tl*100).toFixed(1):0}% · etiq. CRM</div></div>
   `;
 
-  // Funnel semana
+  // Funnel semana — "Contactados humanamente" usa calcTppc como proxy
   const asignados=semData.filter(d=>VENDEDORES.includes(d.prop)).length;
-  const enOp=semData.filter(d=>d.estado==='en oportunidad').length;
+  const enOp=semData.filter(d=>d.estado==='En Oportunidad').length;
   const funnelS=[
     {l:'Captados',n:tl,c:modoClaro?'#1565c0':'#d4b96a'},
     {l:'Asignados a vendedor',n:asignados,c:modoClaro?'#1976d2':'#6aabcc'},
-    {l:'Contactados humanamente',n:contactados,c:modoClaro?'#2e7d52':'#5ab89a'},
+    {l:'Contactados humanamente',note:'Vendedor activo con al menos 1 contacto registrado',n:contactados,c:modoClaro?'#2e7d52':'#5ab89a'},
     {l:'En oportunidad',n:enOp,c:modoClaro?'#e65100':'#cc9a5a'},
     {l:'Clientes',n:cl,c:modoClaro?'#388e3c':'#47b86a'},
   ];
@@ -1011,12 +1099,12 @@ function renderSemana() {
   mkChart('cSemDias',{type:'bar',data:{labels:dayNames,datasets:[{label:'Leads',data:dayData,backgroundColor:dayData.map((_,i)=>i===6?C.red():C.blue()),borderWidth:0,borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()}}}}});
 
   // Asesores semana
-  const asData=VENDEDORES.map(v=>({n:v.split(' ')[0],c:semData.filter(d=>d.prop===v&&d.estado==='cliente').length})).filter(a=>a.c>0);
+  const asData=VENDEDORES.map(v=>({n:v.split(' ')[0],c:semData.filter(d=>d.prop===v&&d.estado==='Cliente').length})).filter(a=>a.c>0);
   mkChart('cSemAsesores',{type:'bar',data:{labels:asData.map(a=>a.n),datasets:[{label:'Clientes',data:asData.map(a=>a.c),backgroundColor:C.green(),borderWidth:0,borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()}}}}});
 
   // Perdidos canal semana
   const perdMap={};
-  semData.filter(d=>d.estado==='lead perdido').forEach(d=>{if(d.origen)perdMap[d.origen]=(perdMap[d.origen]||0)+1;});
+  semData.filter(d=>d.estado==='Lead Perdido').forEach(d=>{if(d.origen)perdMap[d.origen]=(perdMap[d.origen]||0)+1;});
   const topP=Object.entries(perdMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
   mkChart('cSemPerdidos',{type:'doughnut',data:{labels:topP.map(p=>p[0]),datasets:[{data:topP.map(p=>p[1]),backgroundColor:[C.red(),C.oran(),C.gold(),C.blue(),C.gray()],borderWidth:1}]},options:{responsive:true,cutout:'55%',plugins:{legend:{position:'right'},tooltip:tipCfg()}}});
 }
@@ -1029,9 +1117,11 @@ function buildFunnel(id, items) {
   items.forEach((f,i)=>{
     const pct=(f.n/max*100).toFixed(0);
     const row=document.createElement('div'); row.className='frow';
+    // f.note: leyenda opcional bajo el label (ej. definición de "contactado humanamente")
+    const noteHtml=f.note?`<div style="font-size:9px;font-weight:400;color:var(--muted);margin-top:2px;font-style:italic;">${f.note}</div>`:'';
     row.innerHTML=`
       <div class="fnum">${i+1}</div>
-      <div class="flbl">${f.l}</div>
+      <div class="flbl">${f.l}${noteHtml}</div>
       <div class="fwrap"><div class="fbar" style="width:${pct}%;background:${f.c};min-width:40px;">
         <span>${f.n.toLocaleString()}</span><span>${pct}%</span>
       </div></div>`;
@@ -1041,10 +1131,10 @@ function buildFunnel(id, items) {
 
 // ============ PIPELINE ============
 function renderPipeline(data) {
-  const op=data.filter(d=>d.estado==='en oportunidad').length,
-        cli=data.filter(d=>d.estado==='cliente').length,
-        perd=data.filter(d=>d.estado==='lead perdido').length,
-        frio=data.filter(d=>d.estado==='lead frío').length;
+  const op=data.filter(d=>d.estado==='En Oportunidad').length,
+        cli=data.filter(d=>d.estado==='Cliente').length,
+        perd=data.filter(d=>d.estado==='Lead Perdido').length,
+        frio=data.filter(d=>d.estado==='Lead Frío').length;
   document.getElementById('kpiPipeline').innerHTML=`
     <div class="kpi a"><div class="kpi-lbl">En oportunidad</div><div class="kpi-val">${op.toLocaleString()}</div></div>
     <div class="kpi g"><div class="kpi-lbl">Clientes</div><div class="kpi-val">${cli}</div></div>
@@ -1067,13 +1157,13 @@ function renderPipeline(data) {
   allData.forEach(d=>{
     const m=getMonth(d.creado); if(!m) return;
     mesMap[m]=(mesMap[m]||0)+1;
-    if(d.estado==='cliente') cliMap[m]=(cliMap[m]||0)+1;
+    if(d.estado==='Cliente') cliMap[m]=(cliMap[m]||0)+1;
   });
   const meses=Object.keys(mesMap).sort();
   mkChart('cClientesMes',{type:'bar',data:{labels:meses.map(monthLabel),datasets:[{label:'Clientes',data:meses.map(m=>cliMap[m]||0),backgroundColor:C.green(),borderColor:'transparent',borderWidth:0,borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()}}}}});
 
   const perdMap={};
-  data.filter(d=>d.estado==='lead perdido').forEach(d=>{if(d.origen)perdMap[d.origen]=(perdMap[d.origen]||0)+1;});
+  data.filter(d=>d.estado==='Lead Perdido').forEach(d=>{if(d.origen)perdMap[d.origen]=(perdMap[d.origen]||0)+1;});
   const topP=Object.entries(perdMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
   mkChart('cPerdidosCanal',{type:'doughnut',data:{labels:topP.map(p=>p[0]),datasets:[{data:topP.map(p=>p[1]),backgroundColor:[C.red(),C.oran(),C.gold(),C.blue(),C.gray(),C.green()],borderWidth:1}]},options:{responsive:true,cutout:'55%',plugins:{legend:{position:'right'},tooltip:tipCfg()}}});
 }
@@ -1082,41 +1172,41 @@ function renderPipeline(data) {
 function renderAsesores(data) {
   const vData=VENDEDORES.map(v=>{
     const leads=data.filter(d=>d.prop===v);
-    const cli=leads.filter(d=>d.estado==='cliente').length;
+    const cli=leads.filter(d=>d.estado==='Cliente').length;
     const cont=leads.filter(d=>{const t=calcTppc(d);return t&&t>0;}).length;
     const tppcArr=leads.map(calcTppc).filter(v=>v&&v>0);
     return {v, total:leads.length, cli, conv:leads.length?+(cli/leads.length*100).toFixed(2):0,
       cont:leads.length?+(cont/leads.length*100).toFixed(1):0,
       tppc:tppcArr.length?median(tppcArr):null,
-      perd:leads.filter(d=>d.estado==='lead perdido').length};
+      perd:leads.filter(d=>d.estado==='Lead Perdido').length};
   });
 
   const tbody=document.getElementById('tablaAsesores'); tbody.innerHTML='';
   vData.forEach(a=>{
     tbody.innerHTML+=`<tr>
       <td><strong>${a.v}</strong></td>
-      <td style="font-family:'Space Mono',monospace;">${a.total.toLocaleString()}</td>
-      <td style="font-family:'Space Mono',monospace;color:var(--green);">${a.cli}</td>
-      <td style="font-family:'Space Mono',monospace;">${a.conv}%</td>
-      <td style="font-family:'Space Mono',monospace;color:var(--accent);">${a.cont}%</td>
-      <td style="font-family:'Space Mono',monospace;color:${tppcColor(a.tppc)};">${fmtTppc(a.tppc)}</td>
-      <td style="font-family:'Space Mono',monospace;color:var(--red);">${a.perd}</td>
+      <td style="">${a.total.toLocaleString()}</td>
+      <td style="color:var(--green);">${a.cli}</td>
+      <td style="">${a.conv}%</td>
+      <td style="color:var(--accent);">${a.cont}%</td>
+      <td style="color:${tppcColor(a.tppc)};">${fmtTppc(a.tppc)}</td>
+      <td style="color:var(--red);">${a.perd}</td>
     </tr>`;
   });
 
   const refData=[
-    {n:'Wendy Rosas',r:'Telemarketing',total:data.filter(d=>d.prop==='Wendy Rosas').length,perd:data.filter(d=>d.prop==='Wendy Rosas'&&d.estado==='lead perdido').length},
-    {n:'Norma López',r:'Telemarketing',total:data.filter(d=>d.prop==='Norma López').length,perd:data.filter(d=>d.prop==='Norma López'&&d.estado==='lead perdido').length},
-    {n:'Gustavo Muñoz',r:'Jefatura',total:data.filter(d=>d.prop==='Gustavo Muñoz').length,perd:data.filter(d=>d.prop==='Gustavo Muñoz'&&d.estado==='lead perdido').length},
-    {n:'Gabriel Valdez',r:'Dirección',total:data.filter(d=>d.prop==='Gabriel Valdez').length,perd:data.filter(d=>d.prop==='Gabriel Valdez'&&d.estado==='lead perdido').length},
+    {n:'Wendy Rosas',r:'Telemarketing',total:data.filter(d=>d.prop==='Wendy Rosas').length,perd:data.filter(d=>d.prop==='Wendy Rosas'&&d.estado==='Lead Perdido').length},
+    {n:'Norma López',r:'Telemarketing',total:data.filter(d=>d.prop==='Norma López').length,perd:data.filter(d=>d.prop==='Norma López'&&d.estado==='Lead Perdido').length},
+    {n:'Gustavo Muñoz',r:'Jefatura',total:data.filter(d=>d.prop==='Gustavo Muñoz').length,perd:data.filter(d=>d.prop==='Gustavo Muñoz'&&d.estado==='Lead Perdido').length},
+    {n:'Gabriel Valdez',r:'Dirección',total:data.filter(d=>d.prop==='Gabriel Valdez').length,perd:data.filter(d=>d.prop==='Gabriel Valdez'&&d.estado==='Lead Perdido').length},
   ];
   const tref=document.getElementById('tablaRef'); tref.innerHTML='';
   refData.forEach(r=>{
     tref.innerHTML+=`<tr>
       <td><strong>${r.n}</strong></td>
       <td><span class="tag tb">${r.r}</span></td>
-      <td style="font-family:'Space Mono',monospace;">${r.total.toLocaleString()}</td>
-      <td style="font-family:'Space Mono',monospace;color:var(--red);">${r.perd}</td>
+      <td style="">${r.total.toLocaleString()}</td>
+      <td style="color:var(--red);">${r.perd}</td>
     </tr>`;
   });
 
@@ -1154,7 +1244,7 @@ function renderTiempo(data) {
   const blbls=['<1h','1-6h','6-24h','24-72h','3-7d','7-30d','>30d'];
   const bData=buckets.map(([a,b])=>{
     const sub=data.filter(d=>{const t=calcTppc(d);return t&&t>a&&t<=b;});
-    const cli=sub.filter(d=>d.estado==='cliente').length;
+    const cli=sub.filter(d=>d.estado==='Cliente').length;
     return sub.length?+(cli/sub.length*100).toFixed(2):0;
   });
   mkChart('cVelocidad',{type:'bar',data:{labels:blbls,datasets:[{label:'Conv%',data:bData,backgroundColor:bData.map(v=>v>=2?C.green():v>=1.5?C.gold():C.red()),borderWidth:0,borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()},ticks:{callback:v=>v+'%'}}}}});
@@ -1163,7 +1253,7 @@ function renderTiempo(data) {
   const hmEl=document.getElementById('heatmap'); hmEl.innerHTML='';
   const convH=Array(24).fill(0).map((_,h)=>{
     const sub=data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getUTCHours()===h; });
-    const cli=sub.filter(d=>d.estado==='cliente').length;
+    const cli=sub.filter(d=>d.estado==='Cliente').length;
     return {vol:sub.length, conv:sub.length?+(cli/sub.length*100).toFixed(1):0};
   });
   const maxConv=Math.max(...convH.map(h=>h.conv),0.1);
@@ -1189,7 +1279,7 @@ function renderTiempo(data) {
   const dData=dNames.map((_,i)=>{
     const wd=i+1===7?0:i+1;
     const sub=data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getUTCDay()===wd; });
-    const cli=sub.filter(d=>d.estado==='cliente').length;
+    const cli=sub.filter(d=>d.estado==='Cliente').length;
     return sub.length?+(cli/sub.length*100).toFixed(2):0;
   });
   mkChart('cDiaSem',{type:'bar',data:{labels:dNames,datasets:[{label:'Conv%',data:dData,backgroundColor:dData.map(v=>v>=2?C.green():v>=1?C.gold():C.red()),borderWidth:0,borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tipCfg()},scales:{x:{grid:{color:gridCol()}},y:{grid:{color:gridCol()},ticks:{callback:v=>v+'%'}}}}});
@@ -1206,7 +1296,7 @@ function renderOferta(data) {
     if(!d.oferta) return;
     if(!oMap[d.oferta]) oMap[d.oferta]={total:0,cli:0};
     oMap[d.oferta].total++;
-    if(d.estado==='cliente') oMap[d.oferta].cli++;
+    if(d.estado==='Cliente') oMap[d.oferta].cli++;
   });
   const arr=Object.entries(oMap).filter(([,v])=>v.total>=5)
     .map(([n,v])=>({n,total:v.total,cli:v.cli,conv:+(v.cli/v.total*100).toFixed(2)}))
@@ -1235,42 +1325,247 @@ function renderOferta(data) {
 }
 
 // ============ INSIGHTS ============
+// Sistema de 15 plantillas dinámicas con condiciones de disparo.
+// Muestra máximo 4 insights priorizados: Críticos (1) > Alertas (2) > Positivos (3) > Verificar (0).
 function renderInsights(data) {
-  const total=data.length;
-  const cli=data.filter(d=>d.estado==='cliente').length;
-  const perd=data.filter(d=>d.estado==='lead perdido').length;
-  const sinC=data.filter(d=>d.etiq.toLowerCase().includes('sin contacto alguno')).length;
-  const trappingPerd=data.filter(d=>TRAPPING.includes(d.prop)&&d.estado==='lead perdido').length;
+  const grid = document.getElementById('insightGrid');
+  const total = data.length;
 
-  // TPPC comparativa Iovanna vs Carmen
-  const getMedianTppc=v=>{const arr=data.filter(d=>d.prop===v).map(calcTppc).filter(t=>t&&t>0);return arr.length?median(arr):null;};
-  const tIov=getMedianTppc('Iovanna Plascencia'), tCar=getMedianTppc('María del Carmen Aldaz');
-  const cIov=data.filter(d=>d.prop==='Iovanna Plascencia'&&d.estado==='cliente').length;
-  const cCar=data.filter(d=>d.prop==='María del Carmen Aldaz'&&d.estado==='cliente').length;
-  const totIov=data.filter(d=>d.prop==='Iovanna Plascencia').length;
-  const totCar=data.filter(d=>d.prop==='María del Carmen Aldaz').length;
+  // Datos insuficientes → insight de verificación directo
+  if (total < 10) {
+    grid.innerHTML = `<div class="icard ii" style="grid-column:1/-1">
+      <div class="itype">⚫ VERIFICAR</div>
+      <div class="itit">Los datos del período están fuera del rango esperado</div>
+      <div class="inum">${total} leads</div>
+      <div class="ibody">Métricas insuficientes para análisis confiable. Verificar: (A) datos completos en Google Sheets, (B) conexión Zapier/Make, (C) filtros activos que excluyan registros.</div>
+    </div>`;
+    return;
+  }
 
-  // Mejor/peor hora
-  const convH=Array(24).fill(0).map((_,h)=>{
-    const s=data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getUTCHours()===h; });
-    return s.length?+(s.filter(d=>d.estado==='cliente').length/s.length*100).toFixed(1):0;
+  const cli  = data.filter(d=>d.estado==='Cliente').length;
+  const perd = data.filter(d=>d.estado==='Lead Perdido').length;
+  const frio = data.filter(d=>d.estado==='Lead Frío').length;
+  const conv = cli/total*100;
+
+  // TPPC general
+  const allTppcArr = data.map(calcTppc).filter(t=>t&&t>0);
+  const tppcMed    = allTppcArr.length ? median(allTppcArr) : null;
+
+  // Sin asignar (sin asesor activo reconocido)
+  const sinAsignar    = data.filter(d=>!d.prop||(!VENDEDORES.includes(d.prop)&&!TRAPPING.includes(d.prop)&&!EXCLUIDOS.includes(d.prop))).length;
+  const pctSinAsignar = sinAsignar/total*100;
+
+  // Leads telemarketing
+  const trappingLeads = data.filter(d=>TRAPPING.includes(d.prop)).length;
+  const pctTrapping   = trappingLeads/total*100;
+
+  // Por asesor
+  const aData = VENDEDORES.map(v=>{
+    const leads = data.filter(d=>d.prop===v);
+    const cliV  = leads.filter(d=>d.estado==='Cliente').length;
+    const tArr  = leads.map(calcTppc).filter(t=>t&&t>0);
+    return {v, total:leads.length, cli:cliV,
+      conv: leads.length ? cliV/leads.length*100 : 0,
+      tppc: tArr.length  ? median(tArr) : null};
+  }).filter(a=>a.total>0);
+
+  // Período anterior (para comparativas)
+  const prevData    = getPreviousPeriodData();
+  const prevTotal   = prevData.length;
+  const prevCli     = prevData.filter(d=>d.estado==='Cliente').length;
+  const prevConv    = prevTotal ? prevCli/prevTotal*100 : 0;
+  const prevTppcArr = prevData.map(calcTppc).filter(t=>t&&t>0);
+  const prevTppcMed = prevTppcArr.length ? median(prevTppcArr) : null;
+
+  // Canal dominante
+  const canalMap={};
+  data.forEach(d=>{if(d.origen) canalMap[d.origen]=(canalMap[d.origen]||0)+1;});
+  const topCanal    = Object.entries(canalMap).sort((a,b)=>b[1]-a[1])[0];
+  const pctTopCanal = topCanal ? topCanal[1]/total*100 : 0;
+
+  // Leads del domingo
+  const convDom    = data.filter(d=>{const dt=cdmxDate(d.creado);return dt&&dt.getUTCDay()===0;});
+  const convDomPct = convDom.length ? convDom.filter(d=>d.estado==='Cliente').length/convDom.length*100 : 0;
+
+  // Mejor hora de conversión
+  const convH = Array(24).fill(0).map((_,h)=>{
+    const s = data.filter(d=>{const dt=cdmxDate(d.creado);return dt&&dt.getUTCHours()===h;});
+    return {vol:s.length, conv:s.length?s.filter(d=>d.estado==='Cliente').length/s.length*100:0};
   });
-  const mejorH=convH.indexOf(Math.max(...convH));
-  const peorD=data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getUTCDay()===0; }).length;
-  const convDom=data.filter(d=>{ const dt=cdmxDate(d.creado); return dt&&dt.getUTCDay()===0; });
-  const convDomPct=convDom.length?+(convDom.filter(d=>d.estado==='cliente').length/convDom.length*100).toFixed(2):0;
+  const mejorH = convH.reduce((mi,h,i,arr)=>h.conv>arr[mi].conv?i:mi,0);
 
-  const insights=[
-    {type:'ic',icon:'🚨',tipo:'CRÍTICO',titulo:`${trappingPerd} leads de trapping marcados como perdidos`,num:`${total?(trappingPerd/total*100).toFixed(1):0}%`,body:`Leads asignados a Wendy o Norma que nunca se reasignaron a un vendedor activo. Cada uno es un lead pagado que no llegó a ningún cierre.`},
-    {type:'io',icon:'💰',tipo:'OPORTUNIDAD',titulo:`Hora ${mejorH}:00 — máxima tasa de conversión`,num:`${convH[mejorH]}%`,body:`Los leads que entran a las ${mejorH}:00 convierten al ${convH[mejorH]}%. Reforzar cobertura en esa hora es gratis si se reorganizan turnos.`},
-    {type:'iw',icon:'⚠️',tipo:'ALERTA',titulo:`${sinC} leads sin ningún contacto humano`,num:`${total?(sinC/total*100).toFixed(1):0}%`,body:`El chatbot los captó pero ningún humano los tocó. A una tasa del ${total?(cli/total*100).toFixed(2):0}%, eso representa ~${(sinC*(cli/(total||1))).toFixed(0)} cierres potenciales no trabajados.`},
-    {type:'ic',icon:'🚨',tipo:'CRÍTICO',titulo:`Carmen vs Iovanna: misma contactación, diferente resultado`,num:`${totCar?+(cCar/totCar*100).toFixed(2):0}% vs ${totIov?+(cIov/totIov*100).toFixed(2):0}%`,body:`TPPC de Carmen: ${fmtTppc(tCar)} | Iovanna: ${fmtTppc(tIov)}. Con ${totCar} leads en cartera, reducir el TPPC de Carmen al nivel de Iovanna podría multiplicar sus cierres.`},
-    {type:'iw',icon:'⚠️',tipo:'ALERTA',titulo:`Domingo: ${convDomPct}% de conversión`,num:`${peorD} leads`,body:`Los ${peorD} leads del domingo convierten al ${convDomPct}% — el día más bajo de la semana. Sin cobertura fin de semana, se pierde un volumen significativo de leads calientes que enfrian rápido.`},
-    {type:'ii',icon:'📊',tipo:'DATO',titulo:`Lead scoring en 0 para el 99.9% de la base`,num:`0 activos`,body:`Clientify tiene scoring nativo pero sin configurar. Activar reglas por canal + hora + oferta permitiría a los asesores priorizar los 200-300 leads más calientes de cada semana sin trabajo adicional.`},
-  ];
+  // Programa con >50 leads y <1% conv
+  const progMap={};
+  data.forEach(d=>{
+    if(!d.oferta) return;
+    if(!progMap[d.oferta]) progMap[d.oferta]={total:0,cli:0};
+    progMap[d.oferta].total++;
+    if(d.estado==='Cliente') progMap[d.oferta].cli++;
+  });
+  const badProg = Object.entries(progMap)
+    .filter(([,v])=>v.total>=50&&v.cli/v.total<0.01)
+    .sort((a,b)=>b[1].total-a[1].total)[0];
 
-  const grid=document.getElementById('insightGrid');
-  grid.innerHTML=insights.map(i=>`
+  const esSemana = filtroActivo==='semana-actual'||filtroActivo==='semana-ant';
+
+  // ── Colección de insights con prioridad ─────────────────────────────────
+  const pool = [];
+
+  // ─── CRÍTICOS (pri=1) ───────────────────────────────────────────────────
+
+  // 1. Leads sin asignar > 30%
+  if (pctSinAsignar>30) {
+    pool.push({pri:1,type:'ic',icon:'🔴',tipo:'CRÍTICO',
+      titulo:`${sinAsignar} leads captados nunca llegaron a un vendedor`,
+      num:pctSinAsignar.toFixed(1)+'%',
+      body:`El ${pctSinAsignar.toFixed(1)}% del período entró al CRM pero no fue asignado a un asesor activo. Son leads pagados que enfriaron sin contacto.`});
+  }
+
+  // 2. TPPC mediano > 48h
+  if (tppcMed&&tppcMed>48) {
+    pool.push({pri:1,type:'ic',icon:'🔴',tipo:'CRÍTICO',
+      titulo:`El equipo tardó más de 2 días en contactar leads en promedio`,
+      num:fmtTppc(tppcMed),
+      body:`Mediana de primer contacto: ${fmtTppc(tppcMed)}. META recomienda <24h para maximizar conversión.`});
+  }
+
+  // 3. Diferencia conversión entre asesores > 5pp
+  if (aData.length>=2) {
+    const sorted=[...aData].sort((a,b)=>b.conv-a.conv);
+    const best=sorted[0], worst=sorted[sorted.length-1];
+    if (best.conv-worst.conv>5) {
+      const est=worst.total>0?Math.round(worst.total*(best.conv-worst.conv)/100):0;
+      pool.push({pri:1,type:'ic',icon:'🔴',tipo:'CRÍTICO',
+        titulo:`${best.v.split(' ')[0]} convierte ${best.conv.toFixed(1)}% — ${worst.v.split(' ')[0]} convierte ${worst.conv.toFixed(1)}%`,
+        num:(best.conv-worst.conv).toFixed(1)+'pp',
+        body:`Misma cartera, resultado diferente. TPPC ${best.v.split(' ')[0]}: ${fmtTppc(best.tppc)} vs ${worst.v.split(' ')[0]}: ${fmtTppc(worst.tppc)}. Igualar TPPC del más lento podría generar ~${est} cierres adicionales.`});
+    }
+  }
+
+  // 4. Leads telemarketing sin reasignar > 10%
+  if (pctTrapping>10) {
+    pool.push({pri:1,type:'ic',icon:'🔴',tipo:'CRÍTICO',
+      titulo:`${trappingLeads} leads de captación masiva sin pasar a ventas`,
+      num:pctTrapping.toFixed(1)+'%',
+      body:`${pctTrapping.toFixed(1)}% asignado a telemarketing nunca fue reasignado a un asesor activo. Cada uno es un lead pagado sin oportunidad de cierre.`});
+  }
+
+  // 5. Lead Frío > 25%
+  const pctFrio = frio/total*100;
+  if (pctFrio>25) {
+    const potencial=Math.round(frio*(conv/100));
+    pool.push({pri:1,type:'ic',icon:'🔴',tipo:'CRÍTICO',
+      titulo:`${frio} leads en estado frío — pipeline estancado`,
+      num:pctFrio.toFixed(1)+'%',
+      body:`Más de 1 de cada 4 leads sin actividad reciente. A la tasa actual (${conv.toFixed(1)}%), representa ~${potencial} cierres potenciales dormidos.`});
+  }
+
+  // ─── ALERTAS (pri=2) ────────────────────────────────────────────────────
+
+  // 6. Conversión domingo < 1% Y volumen > 100
+  if (convDomPct<1&&convDom.length>100) {
+    pool.push({pri:2,type:'iw',icon:'🟡',tipo:'ALERTA',
+      titulo:`${convDom.length} leads del domingo convirtieron al ${convDomPct.toFixed(1)}% — día más débil`,
+      num:convDomPct.toFixed(1)+'%',
+      body:`Sin cobertura fin de semana, leads calientes enfrían sin contacto. Reorganizar turnos costaría $0.`});
+  }
+
+  // 7. Leads semana actual < 80% de semana anterior
+  if (esSemana&&filtroActivo==='semana-actual'&&prevTotal>0&&total<prevTotal*0.8) {
+    const caida=((prevTotal-total)/prevTotal*100).toFixed(0);
+    pool.push({pri:2,type:'iw',icon:'🟡',tipo:'ALERTA',
+      titulo:`El volumen de leads cayó ${caida}% respecto a la semana pasada`,
+      num:'-'+caida+'%',
+      body:`De ${prevTotal} a ${total} leads. Si la inversión Meta no cambió, revisar rendimiento de campañas.`});
+  }
+
+  // 8. Hora de mayor conversión fuera de horario laboral (<8h o ≥20h)
+  if ((mejorH<8||mejorH>=20)&&convH[mejorH].vol>=5) {
+    pool.push({pri:2,type:'iw',icon:'🟡',tipo:'ALERTA',
+      titulo:`La mayor conversión ocurre a las ${String(mejorH).padStart(2,'0')}h — fuera de horario estándar`,
+      num:convH[mejorH].conv.toFixed(1)+'%',
+      body:`Puede reflejar actualización tardía de estatus en el CRM. Registrar cierres en tiempo real haría este dato más confiable.`});
+  }
+
+  // 9. Programa > 50 leads con conversión < 1%
+  if (badProg) {
+    pool.push({pri:2,type:'iw',icon:'🟡',tipo:'ALERTA',
+      titulo:`${badProg[0]} recibe ${badProg[1].total} leads pero convierte menos del 1%`,
+      num:(badProg[1].cli/badProg[1].total*100).toFixed(2)+'%',
+      body:`Alto volumen, baja conversión. Revisar perfil del lead captado y guión de ventas para este programa.`});
+  }
+
+  // 10. Conversión sube >2pp Y leads bajan >15%
+  if (prevTotal>0&&conv-prevConv>2&&total<prevTotal*0.85) {
+    pool.push({pri:2,type:'iw',icon:'🟡',tipo:'ALERTA',
+      titulo:`Mejor conversión, menos leads — cuidado con el embudo`,
+      num:'+'+(conv-prevConv).toFixed(1)+'pp conv',
+      body:`El equipo cierra mejor pero con menos material. Sin mantener captación, la mejora no se traduce en más ingresos.`});
+  }
+
+  // 11. Un canal concentra >70% del volumen
+  if (pctTopCanal>70&&topCanal) {
+    pool.push({pri:2,type:'iw',icon:'🟡',tipo:'ALERTA',
+      titulo:`${topCanal[0]} representa ${pctTopCanal.toFixed(0)}% de todos los leads`,
+      num:pctTopCanal.toFixed(0)+'%',
+      body:`Concentración alta en un canal es riesgo operativo. Si falla o sube de precio, el pipeline se detiene.`});
+  }
+
+  // ─── POSITIVOS (pri=3) ──────────────────────────────────────────────────
+
+  // 12. TPPC mediano actual < TPPC mediano período anterior
+  if (tppcMed&&prevTppcMed&&tppcMed<prevTppcMed) {
+    const mejora=prevTppcMed-tppcMed;
+    pool.push({pri:3,type:'io',icon:'🟢',tipo:'POSITIVO',
+      titulo:`El equipo respondió ${fmtTppc(mejora)} más rápido que el período anterior`,
+      num:fmtTppc(tppcMed),
+      body:`Mediana bajó de ${fmtTppc(prevTppcMed)} a ${fmtTppc(tppcMed)}. Menor TPPC correlaciona históricamente con mayor conversión.`});
+  }
+
+  // 13. Asesor con conversión > 10% (con mínimo 5 leads)
+  const superAsesor=aData.find(a=>a.conv>10&&a.total>=5);
+  if (superAsesor) {
+    pool.push({pri:3,type:'io',icon:'🟢',tipo:'POSITIVO',
+      titulo:`${superAsesor.v.split(' ')[0]} convirtió al ${superAsesor.conv.toFixed(1)}% — mejor marca del período`,
+      num:superAsesor.conv.toFixed(1)+'%',
+      body:`${superAsesor.total} leads trabajados, ${superAsesor.cli} cierres. Su TPPC de ${fmtTppc(superAsesor.tppc)} puede servir como referencia para el equipo.`});
+  }
+
+  // ─── FUERA DE RANGO (pri=0, muestran al final) ──────────────────────────
+
+  // 14. Cero cierres en el período (con volumen suficiente)
+  if (cli===0&&total>=10) {
+    pool.push({pri:0,type:'ii',icon:'⚫',tipo:'VERIFICAR',
+      titulo:`Sin cierres registrados en el período seleccionado`,
+      num:'0 clientes',
+      body:`Verificar: (A) sincronización Make/Zapier activa, (B) cierres marcados como 'Cliente' en CRM, (C) que el período tenga al menos 7 días de datos.`});
+  }
+
+  // 15. KPI imposible (conv > 100%)
+  if (conv>100) {
+    pool.push({pri:0,type:'ii',icon:'⚫',tipo:'VERIFICAR',
+      titulo:`Los datos del período están fuera del rango esperado`,
+      num:total+' leads',
+      body:`Métricas insuficientes para análisis confiable. Verificar: (A) datos completos en Google Sheets, (B) conexión Zapier/Make, (C) filtros activos que excluyan registros.`});
+  }
+
+  // ── Ordenar: Críticos primero, luego Alertas, Positivos; Verificar al final
+  pool.sort((a,b)=>{
+    if(a.pri===0&&b.pri!==0) return 1;
+    if(a.pri!==0&&b.pri===0) return -1;
+    return a.pri-b.pri;
+  });
+
+  // Mostrar máximo 4; si nada disparó → mensaje positivo por defecto
+  const toShow = pool.slice(0,4);
+  if (toShow.length===0) {
+    toShow.push({type:'io',icon:'🟢',tipo:'POSITIVO',
+      titulo:`El período no presenta alertas críticas`,
+      num:conv.toFixed(2)+'%',
+      body:`Conversión del ${conv.toFixed(2)}% con ${total.toLocaleString()} leads. TPPC mediano: ${fmtTppc(tppcMed)}. Sin umbrales críticos superados en este período.`});
+  }
+
+  grid.innerHTML = toShow.map(i=>`
     <div class="icard ${i.type}">
       <div class="itype">${i.icon} ${i.tipo}</div>
       <div class="itit">${i.titulo}</div>
@@ -1279,7 +1574,6 @@ function renderInsights(data) {
     </div>
   `).join('');
 }
-
 // ============ TABS ============
 function showTab(id, el) {
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
@@ -1411,7 +1705,7 @@ function renderMeta(rows) {
     });
   }
   const totalCRM     = crmPeriodo.length;
-  const totalClientes = crmPeriodo.filter(d => d.estado === 'cliente').length;
+  const totalClientes = crmPeriodo.filter(d => d.estado === 'Cliente').length;
   const cplReal      = totalCRM > 0 ? totalInv / totalCRM : 0;
   const cplCliente   = totalClientes > 0 ? totalInv / totalClientes : 0;
 
@@ -1465,7 +1759,7 @@ function renderMeta(rows) {
   const clientesPorMes = {};
   mesesPeriodo.forEach(m => {
     crmPorMes[m]      = allData.filter(d => getMonth(d.creado) === m).length;
-    clientesPorMes[m] = allData.filter(d => getMonth(d.creado) === m && d.estado === 'cliente').length;
+    clientesPorMes[m] = allData.filter(d => getMonth(d.creado) === m && d.estado === 'Cliente').length;
   });
 
   // Para Meta por mes: usamos los resultados totales distribuidos por peso CRM
@@ -1647,11 +1941,11 @@ function renderMeta(rows) {
     const cpr = toNum(r[colCPR]);
     return `<tr>
       <td style="font-size:11px;max-width:220px;">${r[colCamp] || '—'}</td>
-      <td style="text-align:right;font-family:'Space Mono',monospace;font-size:11px;${inv>0?'color:var(--accent);':'color:var(--muted);'}">
+      <td style="text-align:right;font-size:11px;${inv>0?'color:var(--accent);':'color:var(--muted);'}">
         ${inv > 0 ? '$'+inv.toLocaleString('es-MX',{maximumFractionDigits:0}) : '—'}
       </td>
-      <td style="text-align:right;font-family:'Space Mono',monospace;font-size:11px;">${res > 0 ? res.toLocaleString() : '—'}</td>
-      <td style="text-align:right;font-family:'Space Mono',monospace;font-size:11px;">${cpr > 0 ? '$'+cpr.toFixed(0) : '—'}</td>
+      <td style="text-align:right;font-size:11px;">${res > 0 ? res.toLocaleString() : '—'}</td>
+      <td style="text-align:right;font-size:11px;">${cpr > 0 ? '$'+cpr.toFixed(0) : '—'}</td>
       <td style="text-align:right;font-size:11px;color:var(--muted);">${toNum(r[colAlc]) > 0 ? toNum(r[colAlc]).toLocaleString('es-MX') : '—'}</td>
       <td style="text-align:right;font-size:11px;color:var(--muted);">${toNum(r[colImpr]) > 0 ? toNum(r[colImpr]).toLocaleString('es-MX') : '—'}</td>
       <td style="text-align:center;">${tipoLabel(r[colInd])}</td>
@@ -1660,57 +1954,95 @@ function renderMeta(rows) {
   }).join('');
 }
 // ============ DIAGNÓSTICO ============
+// Genera un prompt de IA con los datos del período activo y lo copia al portapapeles.
+// Incluye métricas principales, tabla de asesores e insights dinámicos activos.
 function diagnostico() {
-  console.log("=== DIAGNÓSTICO DE FECHAS ===");
-  console.log("Total registros en allData:", allData.length);
-  
-  // Contar por mes
-  const mesMap = {};
-  let sinFecha = 0, formatoRaro = [];
-  
-  allData.forEach((d, i) => {
-    const raw = d.creado;
-    if (!raw) { sinFecha++; return; }
-    const m = getMonth(raw);
-    if (!m) { 
-      sinFecha++;
-      if (formatoRaro.length < 5) formatoRaro.push({idx: i, raw: raw});
-      return;
-    }
-    mesMap[m] = (mesMap[m] || 0) + 1;
-  });
-  
-  console.log("\n--- Conteo por mes ---");
-  Object.keys(mesMap).sort().forEach(m => {
-    console.log(m + ": " + mesMap[m]);
-  });
-  
-  console.log("\nSin fecha o formato no reconocido:", sinFecha);
-  
-  if (formatoRaro.length > 0) {
-    console.log("\nEjemplos de fechas no reconocidas:");
-    formatoRaro.forEach(f => console.log("  fila " + f.idx + ":", JSON.stringify(f.raw)));
-  }
-  
-  // Mostrar primeras 3 fechas de cada mes
-  console.log("\n--- Primeras 3 fechas por mes (raw del CSV) ---");
-  const muestraMes = {};
-  allData.forEach(d => {
-    const m = getMonth(d.creado);
-    if (!m) return;
-    if (!muestraMes[m]) muestraMes[m] = [];
-    if (muestraMes[m].length < 3) muestraMes[m].push(d.creado);
-  });
-  Object.keys(muestraMes).sort().forEach(m => {
-    console.log(m + ":");
-    muestraMes[m].forEach(f => console.log("  " + JSON.stringify(f)));
-  });
-  
-  alert("Diagnóstico listo. Abre la Consola del navegador (F12 → Console) y copia todo lo que dice ahí. Pásaselo a Claude.");
-}
+  const filtroBtn = document.querySelector('.filter-btn.active');
+  const periodo   = filtroBtn ? filtroBtn.textContent.trim() : 'TODOS';
+  const hoy       = new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
 
+  const d = getFiltered();
+  const total = d.length;
+  const cli   = d.filter(x=>x.estado==='Cliente').length;
+  const perd  = d.filter(x=>x.estado==='Lead Perdido').length;
+  const frio  = d.filter(x=>x.estado==='Lead Frío').length;
+  const conv  = total ? (cli/total*100).toFixed(2) : 0;
+
+  const tArr      = d.map(calcTppc).filter(t=>t&&t>0);
+  const tppcMed   = tArr.length ? median(tArr) : null;
+  const tppcProm  = tArr.length ? tArr.reduce((a,b)=>a+b,0)/tArr.length : null;
+  const rapidosCt = d.filter(x=>{const t=calcTppc(x);return t&&t<24;}).length;
+  const lentosCt  = d.filter(x=>{const t=calcTppc(x);return t&&t>72;}).length;
+
+  const vd          = d.filter(x=>VENDEDORES.includes(x.prop));
+  const contactados = vd.filter(x=>{const t=calcTppc(x);return t&&t>0;}).length;
+  const sinAsignar  = d.filter(x=>!x.prop||(!VENDEDORES.includes(x.prop)&&!TRAPPING.includes(x.prop)&&!EXCLUIDOS.includes(x.prop))).length;
+
+  const asesorLines = VENDEDORES.map(v=>{
+    const leads = d.filter(x=>x.prop===v);
+    const cliV  = leads.filter(x=>x.estado==='Cliente').length;
+    const tpArr = leads.map(calcTppc).filter(t=>t&&t>0);
+    return `${v} | Leads: ${leads.length} | Clientes: ${cliV} | Conversión: ${leads.length?(cliV/leads.length*100).toFixed(1):0}% | TPPC mediano: ${tpArr.length?fmtTppc(median(tpArr)):'—'}`;
+  }).join('
+');
+
+  const insightCards = document.querySelectorAll('#insightGrid .icard');
+  const insightsText = Array.from(insightCards).map(card=>{
+    const tipo = card.querySelector('.itype')?.textContent?.trim()||'';
+    const tit  = card.querySelector('.itit')?.textContent?.trim()||'';
+    const body = card.querySelector('.ibody')?.textContent?.trim()||'';
+    return `${tipo}: ${tit}. ${body}`;
+  }).join('
+');
+
+  const texto =
+`Eres un analista de CRM. Analiza los siguientes datos de captación y ventas de la UNIVERSIDAD AMÉRICA LATINA (UAL), universidad privada en México. Los vendedores activos son asesores de admisiones. TPPC = tiempo de primer contacto (horas entre que entra el lead y el primer contacto del asesor).
+
+Período analizado: ${periodo}
+Fecha de análisis: ${hoy}
+
+MÉTRICAS PRINCIPALES:
+- Leads totales: ${total.toLocaleString()}
+- Clientes (cierres): ${cli} | Conversión: ${conv}%
+- TPPC mediano: ${fmtTppc(tppcMed)}
+- TPPC promedio: ${fmtTppc(tppcProm)}
+- Leads rápidos (<24h): ${rapidosCt}
+- Leads lentos (>72h): ${lentosCt}
+- Sin asignar: ${sinAsignar} (${total?(sinAsignar/total*100).toFixed(1):0}%)
+- Contactados humanamente: ${contactados} (${vd.length?(contactados/vd.length*100).toFixed(1):0}% de asignados)
+- Lead Frío: ${frio} (${total?(frio/total*100).toFixed(1):0}%)
+- Lead Perdido: ${perd} (${total?(perd/total*100).toFixed(1):0}%)
+
+ASESORES ACTIVOS:
+${asesorLines}
+
+HALLAZGOS AUTOMÁTICOS DEL SISTEMA:
+${insightsText||'Sin hallazgos disponibles'}
+
+Proporciona: (1) diagnóstico general del período, (2) identificación de los 2-3 problemas más urgentes, (3) recomendaciones accionables priorizadas.`;
+
+  navigator.clipboard.writeText(texto).then(()=>{
+    // Cambiar texto del botón temporalmente
+    const btn = document.querySelector('[onclick="diagnostico()"]');
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = '✓ COPIADO';
+      btn.style.cssText += ';border-color:var(--green);color:var(--green);';
+      setTimeout(()=>{ btn.textContent=orig; btn.style.cssText=btn.style.cssText.replace(/;border-color[^;]*;color[^;]*/,''); },3000);
+    }
+    // Toast flotante
+    const toast = document.createElement('div');
+    toast.textContent = '✓ Copiado al portapapeles — pégalo en ChatGPT, Claude o cualquier IA';
+    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:10px 20px;border-radius:6px;font-size:12px;font-weight:600;z-index:9999;pointer-events:none;transition:opacity .3s;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.2);';
+    document.body.appendChild(toast);
+    setTimeout(()=>{ toast.style.opacity='0'; setTimeout(()=>toast.remove(),300); },3000);
+  }).catch(()=>{
+    alert('No se pudo copiar automáticamente. Abre la consola (F12) y copia desde ahí.');
+    console.log(texto);
+  });
+}
 // ============ INIT ============
-Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.font.family = "'Inter', sans-serif";
 Chart.defaults.color = '#5a6e85';
 Chart.defaults.plugins.legend.labels.boxWidth = 10;
 Chart.defaults.plugins.legend.labels.padding = 12;

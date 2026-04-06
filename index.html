@@ -1983,8 +1983,7 @@ function diagnostico() {
     const cliV  = leads.filter(x=>x.estado==='Cliente').length;
     const tpArr = leads.map(calcTppc).filter(t=>t&&t>0);
     return `${v} | Leads: ${leads.length} | Clientes: ${cliV} | Conversión: ${leads.length?(cliV/leads.length*100).toFixed(1):0}% | TPPC mediano: ${tpArr.length?fmtTppc(median(tpArr)):'—'}`;
-  }).join('
-');
+  }).join('\n');
 
   const insightCards = document.querySelectorAll('#insightGrid .icard');
   const insightsText = Array.from(insightCards).map(card=>{
@@ -1992,8 +1991,7 @@ function diagnostico() {
     const tit  = card.querySelector('.itit')?.textContent?.trim()||'';
     const body = card.querySelector('.ibody')?.textContent?.trim()||'';
     return `${tipo}: ${tit}. ${body}`;
-  }).join('
-');
+  }).join('\n');
 
   const texto =
 `Eres un analista de CRM. Analiza los siguientes datos de captación y ventas de la UNIVERSIDAD AMÉRICA LATINA (UAL), universidad privada en México. Los vendedores activos son asesores de admisiones. TPPC = tiempo de primer contacto (horas entre que entra el lead y el primer contacto del asesor).

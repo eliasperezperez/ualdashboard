@@ -147,6 +147,9 @@ th{text-align:left;padding:9px 14px;font-size:9px;font-weight:700;color:var(--mu
 td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:12px;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:var(--surface2);}
+th.th-sort{cursor:pointer;user-select:none;transition:color .12s;}
+th.th-sort:hover{color:var(--text);}
+th.th-sort-active{color:var(--accent)!important;}
 
 /* TAGS */
 .tag{display:inline-block;padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700;}
@@ -1180,6 +1183,54 @@ function renderPipeline(data) {
 }
 
 // ============ ASESORES ============
+// ============ TABLE SORT ENGINE (C8) ============
+// Provides click-to-sort on any <tbody>. State is re-initialized on each period change
+// (renderAsesores re-calls _initTblSort with defaultCol each render).
+// Nulls / empty always sort to the end regardless of direction.
+const _sortCfg = {};
+
+function _applyTblSort(id) {
+  const cfg = _sortCfg[id]; if (!cfg) return;
+  const tbody = document.getElementById(id); if (!tbody) return;
+  const tr = tbody.closest('table').querySelector('thead tr'); if (!tr) return;
+  const {cols, renderRow, data, col, dir} = cfg;
+  // Re-render header row with indicators
+  tr.innerHTML = cols.map((c, i) => {
+    const active = col === i;
+    const arrow  = active ? (dir === 'asc' ? ' ↑' : ' ↓') : '';
+    const cls    = 'th-sort' + (active ? ' th-sort-active' : '');
+    return `<th class="${cls}" style="${c.style||''}" title="${c.title||''}" onclick="_onTblSort('${id}',${i})">${c.label}${arrow}</th>`;
+  }).join('');
+  // Sort data — nulls always last
+  const sorted = [...data].sort((a, b) => {
+    const va = a[cols[col].key], vb = b[cols[col].key];
+    const na = va == null || va === '', nb = vb == null || vb === '';
+    if (na && nb) return 0;
+    if (na) return 1;
+    if (nb) return -1;
+    const cmp = cols[col].type === 'str'
+      ? String(va).localeCompare(String(vb), 'es')
+      : Number(va) - Number(vb);
+    return dir === 'asc' ? cmp : -cmp;
+  });
+  tbody.innerHTML = sorted.map(renderRow).join('');
+}
+
+function _onTblSort(id, colIdx) {
+  const cfg = _sortCfg[id]; if (!cfg) return;
+  cfg.dir = cfg.col === colIdx
+    ? (cfg.dir === 'asc' ? 'desc' : 'asc')
+    : (cfg.cols[colIdx].defDir || 'desc');
+  cfg.col = colIdx;
+  _applyTblSort(id);
+}
+
+function _initTblSort(id, cols, renderRow, data, defCol, defDir) {
+  _sortCfg[id] = {cols, renderRow, data, col: defCol, dir: defDir || 'desc'};
+  _applyTblSort(id);
+}
+// ─────────────────────────────────────────────────────────────
+
 function renderAsesores(data) {
   const vData=VENDEDORES.map(v=>{
     const leads=data.filter(d=>d.prop===v);
@@ -1193,18 +1244,28 @@ function renderAsesores(data) {
       perd:leads.filter(d=>d.estado==='Lead Perdido').length};
   });
 
-  const tbody=document.getElementById('tablaAsesores'); tbody.innerHTML='';
-  vData.forEach(a=>{
-    tbody.innerHTML+=`<tr>
-      <td><strong>${a.v}</strong></td>
-      <td style="">${a.total.toLocaleString()}</td>
-      <td style="color:var(--green);">${a.cli}</td>
-      <td style="">${a.conv}%</td>
-      <td style="color:var(--accent);">${a.cont}%</td>
-      <td style="color:${tppcColor(a.tppc)};">${fmtTppc(a.tppc)}<div style="font-size:9px;font-weight:400;color:var(--muted);margin-top:1px;">mediana ${a.tppcN} leads</div></td>
-      <td style="color:var(--red);">${a.perd}</td>
-    </tr>`;
-  });
+  // Columns definition — defDir: direction when first clicking that column
+  const asCols = [
+    {key:'v',    type:'str', label:'Asesor',       defDir:'asc'},
+    {key:'total',type:'num', label:'Cartera'},
+    {key:'cli',  type:'num', label:'Clientes'},
+    {key:'conv', type:'num', label:'Conv.'},
+    {key:'cont', type:'num', label:'Contactación'},
+    {key:'tppc', type:'num', label:'TPPC ⓘ', defDir:'asc',
+     title:'Tiempo desde entrada al CRM hasta el último contacto registrado en Clientify. Mediana del período. Menor = más rápido.'},
+    {key:'perd', type:'num', label:'Perdidos'},
+  ];
+  const asRow = a => `<tr>
+    <td><strong>${a.v}</strong></td>
+    <td>${a.total.toLocaleString()}</td>
+    <td style="color:var(--green);">${a.cli}</td>
+    <td>${a.conv}%</td>
+    <td style="color:var(--accent);">${a.cont}%</td>
+    <td style="color:${tppcColor(a.tppc)};">${fmtTppc(a.tppc)}<div style="font-size:9px;font-weight:400;color:var(--muted);margin-top:1px;">mediana ${a.tppcN} leads</div></td>
+    <td style="color:var(--red);">${a.perd}</td>
+  </tr>`;
+  // Default sort: Conv. (col 3) desc — resets on every period change
+  _initTblSort('tablaAsesores', asCols, asRow, vData, 3, 'desc');
 
   const refData=[
     {n:'Wendy Rosas',r:'Telemarketing',total:data.filter(d=>d.prop==='Wendy Rosas').length,perd:data.filter(d=>d.prop==='Wendy Rosas'&&d.estado==='Lead Perdido').length},
@@ -1951,24 +2012,38 @@ function renderMeta(rows) {
     return '<span class="tag to">'+ent+'</span>';
   };
 
-  const todosOrdenados = [...rows].sort((a,b) => toNum(b[colInv]) - toNum(a[colInv]));
-  document.getElementById('metaTablaBody').innerHTML = todosOrdenados.map(r => {
-    const inv = toNum(r[colInv]);
-    const res = toNum(r[colRes]);
-    const cpr = toNum(r[colCPR]);
-    return `<tr>
-      <td style="font-size:11px;max-width:220px;">${r[colCamp] || '—'}</td>
-      <td style="text-align:right;font-size:11px;${inv>0?'color:var(--accent);':'color:var(--muted);'}">
-        ${inv > 0 ? '$'+inv.toLocaleString('es-MX',{maximumFractionDigits:0}) : '—'}
-      </td>
-      <td style="text-align:right;font-size:11px;">${res > 0 ? res.toLocaleString() : '—'}</td>
-      <td style="text-align:right;font-size:11px;">${cpr > 0 ? '$'+cpr.toFixed(0) : '—'}</td>
-      <td style="text-align:right;font-size:11px;color:var(--muted);">${toNum(r[colAlc]) > 0 ? toNum(r[colAlc]).toLocaleString('es-MX') : '—'}</td>
-      <td style="text-align:right;font-size:11px;color:var(--muted);">${toNum(r[colImpr]) > 0 ? toNum(r[colImpr]).toLocaleString('es-MX') : '—'}</td>
-      <td style="text-align:center;">${tipoLabel(r[colInd])}</td>
-      <td style="text-align:center;">${estadoLabel(r[colEnt])}</td>
-    </tr>`;
-  }).join('');
+  const metaCols = [
+    {key:'camp', type:'str', label:'Campaña',       defDir:'asc'},
+    {key:'inv',  type:'num', label:'Inversión MXN', style:'text-align:right;'},
+    {key:'res',  type:'num', label:'Resultados',    style:'text-align:right;'},
+    {key:'cpr',  type:'num', label:'CPL',           style:'text-align:right;', defDir:'asc'},
+    {key:'alc',  type:'num', label:'Alcance',       style:'text-align:right;'},
+    {key:'impr', type:'num', label:'Impresiones',   style:'text-align:right;'},
+    {key:'ind',  type:'str', label:'Tipo',          style:'text-align:center;'},
+    {key:'ent',  type:'str', label:'Estado',        style:'text-align:center;'},
+  ];
+  const metaRowsData = rows.map(r => ({
+    camp: r[colCamp] || '',
+    inv:  toNum(r[colInv]),
+    res:  toNum(r[colRes]),
+    cpr:  toNum(r[colCPR]),
+    alc:  toNum(r[colAlc]),
+    impr: toNum(r[colImpr]),
+    ind:  r[colInd] || '',
+    ent:  r[colEnt] || '',
+  }));
+  const metaRow = m => `<tr>
+    <td style="font-size:11px;max-width:220px;">${m.camp || '—'}</td>
+    <td style="text-align:right;font-size:11px;${m.inv>0?'color:var(--accent);':'color:var(--muted);'}">${m.inv > 0 ? '$'+m.inv.toLocaleString('es-MX',{maximumFractionDigits:0}) : '—'}</td>
+    <td style="text-align:right;font-size:11px;">${m.res > 0 ? m.res.toLocaleString() : '—'}</td>
+    <td style="text-align:right;font-size:11px;">${m.cpr > 0 ? '$'+m.cpr.toFixed(0) : '—'}</td>
+    <td style="text-align:right;font-size:11px;color:var(--muted);">${m.alc > 0 ? m.alc.toLocaleString('es-MX') : '—'}</td>
+    <td style="text-align:right;font-size:11px;color:var(--muted);">${m.impr > 0 ? m.impr.toLocaleString('es-MX') : '—'}</td>
+    <td style="text-align:center;">${tipoLabel(m.ind)}</td>
+    <td style="text-align:center;">${estadoLabel(m.ent)}</td>
+  </tr>`;
+  // Default sort: Inversión (col 1) desc
+  _initTblSort('metaTablaBody', metaCols, metaRow, metaRowsData, 1, 'desc');
 }
 // ============ DIAGNÓSTICO ============
 // Genera un prompt de IA con los datos del período activo y lo copia al portapapeles.

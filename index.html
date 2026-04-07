@@ -373,7 +373,7 @@ tr:hover td{background:var(--surface2);}
   <div class="twrap">
     <div class="thead">Vendedores activos — métricas del período seleccionado</div>
     <table><thead><tr>
-      <th>Asesor</th><th>Cartera</th><th>Clientes</th><th>Conv.</th><th>Contactación</th><th>TPPC</th><th>Perdidos</th>
+      <th>Asesor</th><th>Cartera</th><th>Clientes</th><th>Conv.</th><th>Contactación</th><th title="Tiempo desde entrada al CRM hasta el último contacto registrado en Clientify. Mediana del período. Proxy: el CRM no registra el primer contacto individual.">TPPC ⓘ</th><th>Perdidos</th>
     </tr></thead><tbody id="tablaAsesores"></tbody></table>
   </div>
   <div class="twrap">
@@ -384,15 +384,18 @@ tr:hover td{background:var(--surface2);}
   </div>
   <div class="chart-grid">
     <div class="cbox"><h3>Conversión vs Contactación</h3><canvas id="cAsesCov"></canvas></div>
-    <div class="cbox"><h3>TPPC por asesor (días)</h3><canvas id="cAsesTppc"></canvas></div>
+    <div class="cbox"><h3>TPPC por asesor (días) <span style="font-size:10px;font-weight:400;color:var(--muted);" title="Mediana de días entre entrada al CRM y último contacto registrado. Proxy de velocidad de respuesta.">ⓘ mediana por asesor</span></h3><canvas id="cAsesTppc"></canvas></div>
   </div>
 </div>
 
 <!-- TIEMPO -->
 <div class="section" id="tab-tiempo">
   <div class="kpi-grid" id="kpiTiempo"></div>
+  <div style="margin:4px 0 12px;padding:8px 12px;background:var(--surface2);border-left:3px solid var(--orange);border-radius:4px;font-size:11px;color:var(--muted);">
+    <strong style="color:var(--text);">Nota TPPC:</strong> Calculado con base en el <em>último</em> contacto registrado en Clientify, no el primero — Clientify no expone el timestamp del primer contacto individual. El valor refleja el tiempo total de seguimiento, no solo el primer toque. Para mayor precisión se requiere campo de primer contacto en CRM.
+  </div>
   <div class="chart-grid">
-    <div class="cbox"><h3>TPPC mediano por mes (horas)</h3><canvas id="cTppcMes"></canvas></div>
+    <div class="cbox"><h3>TPPC mediano por mes (horas) <span style="font-size:10px;font-weight:400;color:var(--muted);" title="Mediana mensual del tiempo entre entrada al CRM y último contacto registrado en Clientify.">ⓘ</span></h3><canvas id="cTppcMes"></canvas></div>
     <div class="cbox"><h3>Conversión por velocidad de respuesta</h3><canvas id="cVelocidad"></canvas></div>
   </div>
   <div class="chart-grid w1">
@@ -693,6 +696,14 @@ function inWeek(dateStr, offset=0) {
   if (!d || isNaN(d)) return false;
   return d >= a && d <= b;
 }
+// calcTppc(): Tiempo de Primer Contacto Proxy (TPPC).
+// LIMITACIÓN DE DATOS: Clientify no expone el timestamp del primer contacto individual.
+// Se usa el campo 'ultimo_contacto' como aproximación — mide el tiempo desde que
+// el lead entra al CRM hasta el ÚLTIMO contacto registrado en Clientify, no el primero.
+// Consecuencia: un asesor que contactó rápido pero siguió haciendo seguimiento tendrá
+// un TPPC "peor" que uno que contactó tarde pero no hizo seguimiento posterior.
+// Para mayor precisión se requeriría un campo de "primer_contacto" en el CRM.
+// Devuelve horas (float positivo). Retorna null si timestamps inválidos o u<=c.
 function calcTppc(item) {
   if (!item.creado || !item.ultimo) return null;
   const c = cdmxDate(item.creado), u = cdmxDate(item.ultimo);
@@ -1178,6 +1189,7 @@ function renderAsesores(data) {
     return {v, total:leads.length, cli, conv:leads.length?+(cli/leads.length*100).toFixed(2):0,
       cont:leads.length?+(cont/leads.length*100).toFixed(1):0,
       tppc:tppcArr.length?median(tppcArr):null,
+      tppcN:tppcArr.length,
       perd:leads.filter(d=>d.estado==='Lead Perdido').length};
   });
 
@@ -1189,7 +1201,7 @@ function renderAsesores(data) {
       <td style="color:var(--green);">${a.cli}</td>
       <td style="">${a.conv}%</td>
       <td style="color:var(--accent);">${a.cont}%</td>
-      <td style="color:${tppcColor(a.tppc)};">${fmtTppc(a.tppc)}</td>
+      <td style="color:${tppcColor(a.tppc)};">${fmtTppc(a.tppc)}<div style="font-size:9px;font-weight:400;color:var(--muted);margin-top:1px;">mediana ${a.tppcN} leads</div></td>
       <td style="color:var(--red);">${a.perd}</td>
     </tr>`;
   });
@@ -1227,10 +1239,10 @@ function renderTiempo(data) {
   const med=median(allTppc);
 
   document.getElementById('kpiTiempo').innerHTML=`
-    <div class="kpi r"><div class="kpi-lbl">Mediana TPPC</div><div class="kpi-val">${fmtTppc(med)}</div><div class="kpi-sub">Período seleccionado</div></div>
-    <div class="kpi o"><div class="kpi-lbl">Media</div><div class="kpi-val">${fmtTppc(allTppc.reduce((a,b)=>a+b,0)/(allTppc.length||1))}</div><div class="kpi-sub">Promedio simple</div></div>
-    <div class="kpi g"><div class="kpi-lbl">Rápidos (&lt;24h)</div><div class="kpi-val">${data.filter(d=>{const t=calcTppc(d);return t&&t<24;}).length}</div></div>
-    <div class="kpi a"><div class="kpi-lbl">Lentos (&gt;72h)</div><div class="kpi-val">${data.filter(d=>{const t=calcTppc(d);return t&&t>72;}).length}</div></div>
+    <div class="kpi r"><div class="kpi-lbl">Mediana TPPC</div><div class="kpi-val">${fmtTppc(med)}</div><div class="kpi-sub">Mediana del período · ${allTppc.length} leads con contacto</div></div>
+    <div class="kpi o"><div class="kpi-lbl">Media TPPC</div><div class="kpi-val">${fmtTppc(allTppc.reduce((a,b)=>a+b,0)/(allTppc.length||1))}</div><div class="kpi-sub">Promedio simple · sensible a outliers</div></div>
+    <div class="kpi g"><div class="kpi-lbl">Rápidos (&lt;24h)</div><div class="kpi-val">${data.filter(d=>{const t=calcTppc(d);return t&&t<24;}).length}</div><div class="kpi-sub">Contactados en menos de 1 día</div></div>
+    <div class="kpi a"><div class="kpi-lbl">Lentos (&gt;72h)</div><div class="kpi-val">${data.filter(d=>{const t=calcTppc(d);return t&&t>72;}).length}</div><div class="kpi-sub">Más de 3 días sin contacto</div></div>
   `;
 
   // TPPC por mes
@@ -1430,15 +1442,20 @@ function renderInsights(data) {
   }
 
   // 3. Diferencia conversión entre asesores > 5pp
+  // Requiere mínimo 15 leads por asesor para evitar comparar muestras no representativas.
   if (aData.length>=2) {
-    const sorted=[...aData].sort((a,b)=>b.conv-a.conv);
-    const best=sorted[0], worst=sorted[sorted.length-1];
-    if (best.conv-worst.conv>5) {
-      const est=worst.total>0?Math.round(worst.total*(best.conv-worst.conv)/100):0;
-      pool.push({pri:1,type:'ic',icon:'🔴',tipo:'CRÍTICO',
-        titulo:`${best.v.split(' ')[0]} convierte ${best.conv.toFixed(1)}% — ${worst.v.split(' ')[0]} convierte ${worst.conv.toFixed(1)}%`,
-        num:(best.conv-worst.conv).toFixed(1)+'pp',
-        body:`Misma cartera, resultado diferente. TPPC ${best.v.split(' ')[0]}: ${fmtTppc(best.tppc)} vs ${worst.v.split(' ')[0]}: ${fmtTppc(worst.tppc)}. Igualar TPPC del más lento podría generar ~${est} cierres adicionales.`});
+    const elegibles=[...aData].filter(a=>a.total>=15);
+    if (elegibles.length>=2) {
+      const sorted=[...elegibles].sort((a,b)=>b.conv-a.conv);
+      const best=sorted[0], worst=sorted[sorted.length-1];
+      if (best.conv-worst.conv>5) {
+        // Cierres potenciales = leads del asesor más lento × tasa del asesor más rápido − cierres actuales
+        const est=Math.max(0,Math.round(worst.total*(best.conv-worst.conv)/100));
+        pool.push({pri:1,type:'ic',icon:'🔴',tipo:'CRÍTICO',
+          titulo:`${best.v.split(' ')[0]} convierte ${best.conv.toFixed(1)}% — ${worst.v.split(' ')[0]} convierte ${worst.conv.toFixed(1)}%`,
+          num:(best.conv-worst.conv).toFixed(1)+'pp',
+          body:`Misma cartera, resultado diferente. Si ${worst.v.split(' ')[0]} igualara el TPPC de ${best.v.split(' ')[0]} (${fmtTppc(best.tppc)}), podría generar ~${est} cierres adicionales en sus ${worst.total} leads actuales.`});
+      }
     }
   }
 

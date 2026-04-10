@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -315,7 +315,8 @@ th.th-sort-active{color:var(--accent)!important;}
 
 <!-- TABS -->
 <div class="tabs">
-  <div class="tab active" onclick="showTab('general',this)">📊 GENERAL</div>
+  <div class="tab active" onclick="showTab('ejecutivo',this)">⭐ EJECUTIVO</div>
+  <div class="tab" onclick="showTab('general',this)">📊 GENERAL</div>
   <div class="tab" onclick="showTab('semana',this)">📅 SEMANA</div>
   <div class="tab" onclick="showTab('pipeline',this)">🔀 PIPELINE</div>
   <div class="tab" onclick="showTab('asesores',this)">👥 ASESORES</div>
@@ -326,8 +327,30 @@ th.th-sort-active{color:var(--accent)!important;}
   <div class="tab" onclick="showTab('meta',this)">📱 META ADS</div>
 </div>
 
+<!-- EJECUTIVO -->
+<div class="section active" id="tab-ejecutivo">
+  <div style="margin-bottom:16px;">
+    <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Vista ejecutiva — semana</div>
+    <div id="subEjecutivo" style="font-size:11px;color:var(--muted);"></div>
+  </div>
+  <div class="kpi-grid" id="kpiEjecutivo"></div>
+  <div style="margin:16px 0;" id="alertasEjecutivo"></div>
+  <div class="cbox" style="margin-top:0;">
+    <h3 style="margin-bottom:12px;">Asesores activos — esta semana</h3>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead><tr style="border-bottom:2px solid var(--border);">
+        <th style="text-align:left;padding:8px;font-size:11px;color:var(--muted);font-weight:600;">Asesor</th>
+        <th style="text-align:center;padding:8px;font-size:11px;color:var(--muted);font-weight:600;">Leads esta semana</th>
+        <th style="text-align:center;padding:8px;font-size:11px;color:var(--muted);font-weight:600;">TPPC mediano</th>
+        <th style="text-align:center;padding:8px;font-size:11px;color:var(--muted);font-weight:600;">Semáforo</th>
+      </tr></thead>
+      <tbody id="tbodyEjecutivo"></tbody>
+    </table>
+  </div>
+</div>
+
 <!-- GENERAL -->
-<div class="section active" id="tab-general">
+<div class="section" id="tab-general">
   <div class="kpi-grid" id="kpiGeneral"></div>
   <div class="chart-grid">
     <div class="cbox"><h3 id="hLeadsMes">Leads por mes</h3><canvas id="cLeadsMes"></canvas></div>
@@ -376,7 +399,7 @@ th.th-sort-active{color:var(--accent)!important;}
   <div class="twrap">
     <div class="thead">Vendedores activos — métricas del período seleccionado</div>
     <table><thead><tr>
-      <th>Asesor</th><th>Cartera</th><th>Clientes</th><th>Conv.</th><th>Contactación</th><th title="Tiempo desde entrada al CRM hasta el último contacto registrado en Clientify. Mediana del período. Proxy: el CRM no registra el primer contacto individual.">TPPC ⓘ</th><th>Perdidos</th>
+      <th>Asesor</th><th>Cartera</th><th>Clientes</th><th>Conv.</th><th>Contactación</th><th title="Tiempo de Primer Contacto real (col. primer_contacto del CRM). Mediana del período, excluyendo base vieja >30d. Verde ≤24h · Amarillo ≤72h · Rojo >72h.">TPPC ⓘ</th><th>Perdidos</th>
     </tr></thead><tbody id="tablaAsesores"></tbody></table>
   </div>
   <div class="twrap">
@@ -387,7 +410,7 @@ th.th-sort-active{color:var(--accent)!important;}
   </div>
   <div class="chart-grid">
     <div class="cbox"><h3>Conversión vs Contactación</h3><canvas id="cAsesCov"></canvas></div>
-    <div class="cbox"><h3>TPPC por asesor (días) <span style="font-size:10px;font-weight:400;color:var(--muted);" title="Mediana de días entre entrada al CRM y último contacto registrado. Proxy de velocidad de respuesta.">ⓘ mediana por asesor</span></h3><canvas id="cAsesTppc"></canvas></div>
+    <div class="cbox"><h3>TPPC por asesor (días) <span style="font-size:10px;font-weight:400;color:var(--muted);" title="Mediana de dias entre entrada al CRM y primer contacto real (col M). Excluye base vieja >30d.">ⓘ mediana por asesor</span></h3><canvas id="cAsesTppc"></canvas></div>
   </div>
 </div>
 
@@ -395,7 +418,7 @@ th.th-sort-active{color:var(--accent)!important;}
 <div class="section" id="tab-tiempo">
   <div class="kpi-grid" id="kpiTiempo"></div>
   <div style="margin:4px 0 12px;padding:8px 12px;background:var(--surface2);border-left:3px solid var(--orange);border-radius:4px;font-size:11px;color:var(--muted);">
-    <strong style="color:var(--text);">Nota TPPC:</strong> Calculado con base en el <em>último</em> contacto registrado en Clientify, no el primero — Clientify no expone el timestamp del primer contacto individual. El valor refleja el tiempo total de seguimiento, no solo el primer toque. Para mayor precisión se requiere campo de primer contacto en CRM.
+    <strong style="color:var(--text);">Nota TPPC:</strong> Calculado con el campo <em>primer_contacto</em> (col M del Sheet) — timestamp del primer contacto real de un asesor activo en hora CDMX. Leads sin este campo no tienen TPPC. Leads con TPPC &gt;30 días se clasifican como <em>base vieja</em> y se excluyen de la mediana del asesor.
   </div>
   <div class="chart-grid">
     <div class="cbox"><h3>TPPC mediano por mes (horas) <span style="font-size:10px;font-weight:400;color:var(--muted);" title="Mediana mensual del tiempo entre entrada al CRM y último contacto registrado en Clientify.">ⓘ</span></h3><canvas id="cTppcMes"></canvas></div>
@@ -571,9 +594,10 @@ th.th-sort-active{color:var(--accent)!important;}
 <script>
 // ============ CONFIG ============
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQzHjDCinlgI6TZ9EClcwJsd-SNTkJSiBjeyOtAUW2GwcYU-1Jw8-wXQyPbVAnDD5YjFfbc4UusN2Zk/pub?gid=0&single=true&output=csv';
-const VENDEDORES = ['Elizabeth Torres','Luis Enrique Ruiz Arriaga','María del Carmen Aldaz','Iovanna Plascencia'];
+const VENDEDORES = ['Elizabeth Torres','Luis Enrique Ruiz Arriaga','Iovanna Plascencia'];
 const TRAPPING   = ['Wendy Rosas','Norma López'];
-const EXCLUIDOS  = ['Gabriel Valdez','Gustavo Muñoz'];
+const EXCLUIDOS  = ['Gabriel Valdez','Gustavo Muñoz','María del Carmen Aldaz','carmen.aldaz@ual.edu.mx'];
+const UMBRAL_BASE_VIEJA_DIAS = 30; // leads contactados >30 días después de entrar al CRM
 
 // ============ STATE ============
 let allData = [];
@@ -699,19 +723,25 @@ function inWeek(dateStr, offset=0) {
   if (!d || isNaN(d)) return false;
   return d >= a && d <= b;
 }
-// calcTppc(): Tiempo de Primer Contacto Proxy (TPPC).
-// LIMITACIÓN DE DATOS: Clientify no expone el timestamp del primer contacto individual.
-// Se usa el campo 'ultimo_contacto' como aproximación — mide el tiempo desde que
-// el lead entra al CRM hasta el ÚLTIMO contacto registrado en Clientify, no el primero.
-// Consecuencia: un asesor que contactó rápido pero siguió haciendo seguimiento tendrá
-// un TPPC "peor" que uno que contactó tarde pero no hizo seguimiento posterior.
-// Para mayor precisión se requeriría un campo de "primer_contacto" en el CRM.
-// Devuelve horas (float positivo). Retorna null si timestamps inválidos o u<=c.
+// calcTppc(): Tiempo de Primer Contacto (TPPC).
+// DATOS REALES: usa col M (primer_contacto) — timestamp del primer contacto real
+// de un asesor activo, en CDMX (YYYY-MM-DD HH:MM:SS). Si la columna está vacía,
+// el lead NO tiene TPPC. No se usa ultimo_contacto como fallback (sería dato falso).
+// Semáforo: Verde ≤24h / Amarillo ≤72h / Rojo >72h.
+// Devuelve horas (float positivo). Retorna null si primer_contacto vacío o p<=c.
 function calcTppc(item) {
-  if (!item.creado || !item.ultimo) return null;
-  const c = cdmxDate(item.creado), u = cdmxDate(item.ultimo);
-  if (!c || !u || isNaN(c) || isNaN(u) || u<=c) return null;
-  return (u-c)/3600000;
+  if (!item.primer || !item.creado) return null;
+  const c = cdmxDate(item.creado), p = cdmxDate(item.primer);
+  if (!c || !p || isNaN(c) || isNaN(p) || p<=c) return null;
+  return (p-c)/3600000;
+}
+// isBaseVieja(): true si el lead fue contactado más de UMBRAL_BASE_VIEJA_DIAS días
+// después de entrar al CRM. Estos leads se excluyen del TPPC mediano del asesor:
+// distorsionan la métrica porque reflejan reactivación de base dormida, no velocidad
+// de respuesta habitual.
+function isBaseVieja(item) {
+  const t = calcTppc(item);
+  return t !== null && t > UMBRAL_BASE_VIEJA_DIAS * 24;
 }
 function median(arr) {
   if (!arr.length) return 0;
@@ -832,6 +862,7 @@ async function loadData() {
               canal:     r['canal_online']||'',
               creado:    r['creado']||'',
               ultimo:    r['ultimo_contacto']||'',
+              primer:    r['primer_contacto']||'',
               oferta:    r['oferta_academica']||'',
               campus:    r['campus']||'',
               etiq:      r['etiquetas']||'',
@@ -941,6 +972,7 @@ function renderPerdidos(data) {
 
 // ============ RENDER ALL ============
 function renderAll(data) {
+  renderEjecutivo();
   renderGeneral(data);
   renderSemana();
   renderPipeline(data);
@@ -951,6 +983,130 @@ function renderAll(data) {
   renderInsights(data);
 }
 
+// ============ EJECUTIVO ============
+// Vista ejecutiva: el dueño de UAL ve los números más importantes sin jerga técnica.
+// Siempre muestra semana actual (o más reciente con datos si aún no hay de esta semana).
+function renderEjecutivo() {
+  const [monA, sunA] = getWeekRange(0);
+  const [monB, sunB] = getWeekRange(-1);
+  const fmt = d => d.toLocaleDateString('es-MX', {day:'2-digit', month:'short'});
+
+  const semAct = allData.filter(d => { const dt = cdmxDate(d.creado); return dt && dt >= monA && dt <= sunA; });
+  const semAnt = allData.filter(d => { const dt = cdmxDate(d.creado); return dt && dt >= monB && dt <= sunB; });
+
+  // Si no hay datos esta semana, retroceder a la semana anterior
+  const offset = semAct.length > 0 ? 0 : -1;
+  const [monUso, sunUso] = getWeekRange(offset);
+  const [monPrev, sunPrev] = getWeekRange(offset - 1);
+  const semUso  = allData.filter(d => { const dt = cdmxDate(d.creado); return dt && dt >= monUso  && dt <= sunUso;  });
+  const semPrev = allData.filter(d => { const dt = cdmxDate(d.creado); return dt && dt >= monPrev && dt <= sunPrev; });
+  const labelPeriodo = `${fmt(monUso)} – ${fmt(sunUso)}${offset < 0 ? ' · semana más reciente con datos' : ''}`;
+
+  // ── KPI 1: Leads esta semana vs anterior ──────────────────────────────────
+  const leadsActual   = semUso.length;
+  const leadsAnterior = semPrev.length;
+  const deltaLeads    = leadsAnterior > 0 ? (leadsActual - leadsAnterior) / leadsAnterior * 100 : 0;
+  const kpi1Cls = leadsActual >= leadsAnterior ? 'g' : deltaLeads >= -20 ? 'a' : 'r';
+
+  // ── KPI 2: TPPC mediano esta semana (excluye base vieja) ──────────────────
+  const semTppcArr = semUso.filter(d => { const t = calcTppc(d); return t && t > 0 && !isBaseVieja(d); }).map(calcTppc);
+  const semTppcMed = semTppcArr.length ? median(semTppcArr) : null;
+  const kpi2Cls    = !semTppcMed ? 'o' : semTppcMed <= 24 ? 'g' : semTppcMed <= 72 ? 'a' : 'r';
+
+  // ── KPI 3: Conversión mes actual — vendedores activos ─────────────────────
+  const nowCDMX = new Date(Date.now() - 6 * 3600000);
+  const mesKey  = `${nowCDMX.getUTCFullYear()}-${String(nowCDMX.getUTCMonth()+1).padStart(2,'0')}`;
+  const mesDatos = allData.filter(d => getMonth(d.creado) === mesKey && VENDEDORES.includes(d.prop));
+  const mesConv  = mesDatos.length ? mesDatos.filter(d => d.estado === 'Cliente').length / mesDatos.length * 100 : 0;
+  const kpi3Cls  = mesConv >= 15 ? 'g' : mesConv >= 8 ? 'a' : 'r';
+
+  // ── KPI 4: Leads sin contacto esta semana ─────────────────────────────────
+  const semVend        = semUso.filter(d => VENDEDORES.includes(d.prop));
+  const semSinContacto = semVend.filter(d => { const t = calcTppc(d); return !t || t <= 0; }).length;
+  const pctSinCont     = semVend.length ? semSinContacto / semVend.length * 100 : 0;
+  const kpi4Cls        = pctSinCont === 0 ? 'g' : pctSinCont <= 20 ? 'a' : 'r';
+
+  document.getElementById('subEjecutivo').textContent = labelPeriodo;
+  document.getElementById('kpiEjecutivo').innerHTML = `
+    <div class="kpi ${kpi1Cls}">
+      <div class="kpi-lbl">Leads esta semana</div>
+      <div class="kpi-val">${leadsActual} <small style="font-size:13px;font-weight:500;">${deltaLeads>=0?'▲':'▼'}${Math.abs(deltaLeads).toFixed(0)}%</small></div>
+      <div class="kpi-sub">vs ${leadsAnterior} la semana anterior</div>
+    </div>
+    <div class="kpi ${kpi2Cls}">
+      <div class="kpi-lbl">TPPC mediano</div>
+      <div class="kpi-val">${fmtTppc(semTppcMed)}</div>
+      <div class="kpi-sub">Verde ≤24h · Amarillo ≤72h · Rojo &gt;72h</div>
+    </div>
+    <div class="kpi ${kpi3Cls}">
+      <div class="kpi-lbl">Conversión del mes</div>
+      <div class="kpi-val">${mesConv.toFixed(1)}%</div>
+      <div class="kpi-sub">${mesDatos.length} leads vendedores activos · Verde ≥15%</div>
+    </div>
+    <div class="kpi ${kpi4Cls}">
+      <div class="kpi-lbl">Sin contacto esta semana</div>
+      <div class="kpi-val">${semSinContacto} <small style="font-size:13px;font-weight:500;">${pctSinCont.toFixed(0)}%</small></div>
+      <div class="kpi-sub">De ${semVend.length} leads asignados · Verde 0%</div>
+    </div>
+  `;
+
+  // ── Alertas proactivas ────────────────────────────────────────────────────
+  const alertas = [];
+  const prevTppcArr = semPrev.filter(d => { const t = calcTppc(d); return t && t > 0 && !isBaseVieja(d); }).map(calcTppc);
+  const prevTppcMed = prevTppcArr.length ? median(prevTppcArr) : null;
+  if (semTppcMed && prevTppcMed && semTppcMed > prevTppcMed * 1.4) {
+    alertas.push({tipo:'alerta', texto:`El tiempo de primer contacto subió ${((semTppcMed/prevTppcMed-1)*100).toFixed(0)}% esta semana — revisar asignación de leads`});
+  }
+  const ahora = Date.now();
+  const sinCont48 = semUso.filter(d => {
+    if (!VENDEDORES.includes(d.prop)) return false;
+    const t = calcTppc(d); if (t && t > 0) return false;
+    const c = cdmxDate(d.creado); if (!c) return false;
+    return (ahora - c.getTime()) / 3600000 > 48;
+  }).length;
+  if (sinCont48 > 10) alertas.push({tipo:'alerta', texto:`${sinCont48} leads llevan más de 48h sin contacto`});
+  if (semVend.length === 0) alertas.push({tipo:'critico', texto:`No hay leads nuevos asignados a vendedores esta semana`});
+
+  const alertasEl = document.getElementById('alertasEjecutivo');
+  if (alertas.length === 0) {
+    alertasEl.innerHTML = `<div style="padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;border-left:3px solid var(--green);color:var(--green);font-weight:600;font-size:13px;">✓ Todo en orden esta semana</div>`;
+  } else {
+    alertasEl.innerHTML = alertas.slice(0,3).map(a => {
+      const bc = a.tipo === 'critico' ? 'var(--red)' : 'var(--accent)';
+      const ic = a.tipo === 'critico' ? '🔴' : '🟡';
+      return `<div style="padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;border-left:3px solid ${bc};margin-bottom:8px;font-size:13px;">${ic} ${a.texto}</div>`;
+    }).join('');
+  }
+
+  // ── Mini tabla asesores ───────────────────────────────────────────────────
+  const aTable = VENDEDORES.map(v => {
+    const leads = semUso.filter(d => d.prop === v);
+    const tArr  = leads.filter(d => { const t = calcTppc(d); return t && t > 0 && !isBaseVieja(d); }).map(calcTppc).filter(t => t && t > 0);
+    return {nombre: v.split(' ')[0], total: leads.length, tppc: tArr.length ? median(tArr) : null};
+  }).sort((a, b) => {
+    if (a.tppc === null && b.tppc === null) return 0;
+    if (a.tppc === null) return 1;
+    if (b.tppc === null) return -1;
+    return a.tppc - b.tppc;
+  });
+  document.getElementById('tbodyEjecutivo').innerHTML = aTable.map(a => {
+    const color = tppcColor(a.tppc);
+    const badge = !a.tppc
+      ? `<span style="background:var(--muted);color:#fff;padding:2px 10px;border-radius:12px;font-size:10px;font-weight:600;">Sin datos</span>`
+      : a.tppc <= 24
+      ? `<span style="background:#2e7d52;color:#fff;padding:2px 10px;border-radius:12px;font-size:10px;font-weight:600;">Verde</span>`
+      : a.tppc <= 72
+      ? `<span style="background:#c9980a;color:#1a1200;padding:2px 10px;border-radius:12px;font-size:10px;font-weight:600;">Amarillo</span>`
+      : `<span style="background:#c62828;color:#fff;padding:2px 10px;border-radius:12px;font-size:10px;font-weight:600;">Rojo</span>`;
+    return `<tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:10px 8px;font-weight:600;">${a.nombre}</td>
+      <td style="text-align:center;padding:10px 8px;">${a.total}</td>
+      <td style="text-align:center;padding:10px 8px;color:${color};font-weight:600;">${fmtTppc(a.tppc)}</td>
+      <td style="text-align:center;padding:10px 8px;">${badge}</td>
+    </tr>`;
+  }).join('');
+}
+
 // ============ GENERAL ============
 function renderGeneral(data) {
   const total=data.length, cli=(data.filter(d=>d.estado==='Cliente')).length,
@@ -958,6 +1114,10 @@ function renderGeneral(data) {
         op=(data.filter(d=>d.estado==='En Oportunidad')).length,
         frio=(data.filter(d=>d.estado==='Lead Frío')).length;
   const conv=total?(cli/total*100).toFixed(2):0;
+  // TPPC mediano — excluye base vieja
+  const tppcGenArr=data.filter(d=>{const t=calcTppc(d);return t&&t>0&&!isBaseVieja(d);}).map(calcTppc);
+  const tppcGenMed=tppcGenArr.length?median(tppcGenArr):null;
+  const tppcKpiCls=!tppcGenMed?'o':tppcGenMed<=24?'g':tppcGenMed<=72?'a':'r';
 
   document.getElementById('kpiGeneral').innerHTML=`
     <div class="kpi a"><div class="kpi-lbl">Contactos</div><div class="kpi-val">${total.toLocaleString()}</div><div class="kpi-sub">Período seleccionado</div></div>
@@ -965,6 +1125,7 @@ function renderGeneral(data) {
     <div class="kpi r"><div class="kpi-lbl">Perdidos</div><div class="kpi-val">${perd.toLocaleString()}</div><div class="kpi-sub">${total?(perd/total*100).toFixed(1):0}%</div></div>
     <div class="kpi b"><div class="kpi-lbl">En Oportunidad</div><div class="kpi-val">${op.toLocaleString()}</div><div class="kpi-sub">${total?(op/total*100).toFixed(1):0}%</div></div>
     <div class="kpi o"><div class="kpi-lbl">Lead Frío</div><div class="kpi-val">${frio.toLocaleString()}</div><div class="kpi-sub">Sin actividad</div></div>
+    <div class="kpi ${tppcKpiCls}"><div class="kpi-lbl">TPPC mediano</div><div class="kpi-val">${fmtTppc(tppcGenMed)}</div><div class="kpi-sub">${tppcGenArr.length} leads con primer contacto</div></div>
   `;
 
   // Detección de tipo de filtro: semana vs mes/todos
@@ -1080,6 +1241,10 @@ function renderSemana() {
 
   // "Sin contacto" vía etiqueta CRM (registro explícito de sin contacto alguno)
   const sinContacto=semData.filter(d=>d.etiq.toLowerCase().includes('sin contacto alguno')).length;
+  // TPPC mediano semana — excluye base vieja
+  const semTppcArr=semData.filter(d=>{const t=calcTppc(d);return t&&t>0&&!isBaseVieja(d);}).map(calcTppc);
+  const semTppcMed=semTppcArr.length?median(semTppcArr):null;
+  const semTppcCls=!semTppcMed?'o':semTppcMed<=24?'g':semTppcMed<=72?'a':'r';
 
   document.getElementById('kpiSemana').innerHTML=`
     <div class="kpi a"><div class="kpi-lbl">Leads</div><div class="kpi-val">${tl}</div><div class="kpi-sub">Total semana</div></div>
@@ -1088,6 +1253,7 @@ function renderSemana() {
     <div class="kpi r"><div class="kpi-lbl">Perdidos</div><div class="kpi-val">${pl}</div><div class="kpi-sub">${tl?(pl/tl*100).toFixed(1):0}%</div></div>
     <div class="kpi o"><div class="kpi-lbl">Sin Asignar</div><div class="kpi-val">${sinAsignar}</div><div class="kpi-sub">${pctSinAsignar}% del total · sin asesor activo</div></div>
     <div class="kpi b"><div class="kpi-lbl">Sin Contacto</div><div class="kpi-val">${sinContacto}</div><div class="kpi-sub">${tl?(sinContacto/tl*100).toFixed(1):0}% · etiq. CRM</div></div>
+    <div class="kpi ${semTppcCls}"><div class="kpi-lbl">TPPC mediano</div><div class="kpi-val">${fmtTppc(semTppcMed)}</div><div class="kpi-sub">${semTppcArr.length} leads con primer contacto</div></div>
   `;
 
   // Funnel semana — "Contactados humanamente" usa calcTppc como proxy
@@ -1235,12 +1401,19 @@ function renderAsesores(data) {
   const vData=VENDEDORES.map(v=>{
     const leads=data.filter(d=>d.prop===v);
     const cli=leads.filter(d=>d.estado==='Cliente').length;
-    const cont=leads.filter(d=>{const t=calcTppc(d);return t&&t>0;}).length;
-    const tppcArr=leads.map(calcTppc).filter(v=>v&&v>0);
+    // Leads con primer_contacto (cualquier velocidad)
+    const contactados=leads.filter(d=>{const t=calcTppc(d);return t&&t>0;});
+    const cont=contactados.length;
+    // Base vieja: contactados más de UMBRAL_BASE_VIEJA_DIAS días después de entrar
+    const baseViejaLeads=contactados.filter(isBaseVieja);
+    // TPPC mediano excluye base vieja para no distorsionar la métrica del asesor
+    const tppcLeads=contactados.filter(d=>!isBaseVieja(d));
+    const tppcArr=tppcLeads.map(calcTppc).filter(t=>t&&t>0);
     return {v, total:leads.length, cli, conv:leads.length?+(cli/leads.length*100).toFixed(2):0,
       cont:leads.length?+(cont/leads.length*100).toFixed(1):0,
       tppc:tppcArr.length?median(tppcArr):null,
       tppcN:tppcArr.length,
+      baseVieja:baseViejaLeads.length,
       perd:leads.filter(d=>d.estado==='Lead Perdido').length};
   });
 
@@ -1252,7 +1425,7 @@ function renderAsesores(data) {
     {key:'conv', type:'num', label:'Conv.'},
     {key:'cont', type:'num', label:'Contactación'},
     {key:'tppc', type:'num', label:'TPPC ⓘ', defDir:'asc',
-     title:'Tiempo desde entrada al CRM hasta el último contacto registrado en Clientify. Mediana del período. Menor = más rápido.'},
+     title:'Tiempo de Primer Contacto real (col. primer_contacto del CRM). Mediana del período, excluyendo leads de base vieja (>30d). Verde ≤24h · Amarillo ≤72h · Rojo >72h.'},
     {key:'perd', type:'num', label:'Perdidos'},
   ];
   const asRow = a => `<tr>
@@ -1261,7 +1434,7 @@ function renderAsesores(data) {
     <td style="color:var(--green);">${a.cli}</td>
     <td>${a.conv}%</td>
     <td style="color:var(--accent);">${a.cont}%</td>
-    <td style="color:${tppcColor(a.tppc)};">${fmtTppc(a.tppc)}<div style="font-size:9px;font-weight:400;color:var(--muted);margin-top:1px;">mediana ${a.tppcN} leads</div></td>
+    <td style="color:${tppcColor(a.tppc)};">${fmtTppc(a.tppc)}<div style="font-size:9px;font-weight:400;color:var(--muted);margin-top:1px;">mediana ${a.tppcN} leads</div>${a.baseVieja?`<div style="font-size:9px;color:#888;margin-top:2px;" title="Leads sin contacto por más de 30 días antes de ser atendidos. No se incluyen en el TPPC del asesor.">Base vieja: ${a.baseVieja}</div>`:''}</td>
     <td style="color:var(--red);">${a.perd}</td>
   </tr>`;
   // Default sort: Conv. (col 3) desc — resets on every period change
@@ -1272,6 +1445,7 @@ function renderAsesores(data) {
     {n:'Norma López',r:'Telemarketing',total:data.filter(d=>d.prop==='Norma López').length,perd:data.filter(d=>d.prop==='Norma López'&&d.estado==='Lead Perdido').length},
     {n:'Gustavo Muñoz',r:'Jefatura',total:data.filter(d=>d.prop==='Gustavo Muñoz').length,perd:data.filter(d=>d.prop==='Gustavo Muñoz'&&d.estado==='Lead Perdido').length},
     {n:'Gabriel Valdez',r:'Dirección',total:data.filter(d=>d.prop==='Gabriel Valdez').length,perd:data.filter(d=>d.prop==='Gabriel Valdez'&&d.estado==='Lead Perdido').length},
+    {n:'M. del Carmen Aldaz',r:'Ex-asesor',total:data.filter(d=>d.prop==='María del Carmen Aldaz'||d.prop==='carmen.aldaz@ual.edu.mx').length,perd:data.filter(d=>(d.prop==='María del Carmen Aldaz'||d.prop==='carmen.aldaz@ual.edu.mx')&&d.estado==='Lead Perdido').length},
   ];
   const tref=document.getElementById('tablaRef'); tref.innerHTML='';
   refData.forEach(r=>{
@@ -1432,11 +1606,12 @@ function renderInsights(data) {
   const trappingLeads = data.filter(d=>TRAPPING.includes(d.prop)).length;
   const pctTrapping   = trappingLeads/total*100;
 
-  // Por asesor
+  // Por asesor — TPPC mediano excluye base vieja (>30d) para no distorsionar
   const aData = VENDEDORES.map(v=>{
     const leads = data.filter(d=>d.prop===v);
     const cliV  = leads.filter(d=>d.estado==='Cliente').length;
-    const tArr  = leads.map(calcTppc).filter(t=>t&&t>0);
+    const tppcLeads = leads.filter(d=>{const t=calcTppc(d);return t&&t>0&&!isBaseVieja(d);});
+    const tArr  = tppcLeads.map(calcTppc).filter(t=>t&&t>0);
     return {v, total:leads.length, cli:cliV,
       conv: leads.length ? cliV/leads.length*100 : 0,
       tppc: tArr.length  ? median(tArr) : null};
@@ -1510,12 +1685,13 @@ function renderInsights(data) {
       const sorted=[...elegibles].sort((a,b)=>b.conv-a.conv);
       const best=sorted[0], worst=sorted[sorted.length-1];
       if (best.conv-worst.conv>5) {
-        // Cierres potenciales = leads del asesor más lento × tasa del asesor más rápido − cierres actuales
-        const est=Math.max(0,Math.round(worst.total*(best.conv-worst.conv)/100));
+        // Cierres potenciales = leads del asesor con menor conv × tasa del asesor con mayor conv
+        // Acotado a la cartera: nunca puede superar worst.total
+        const potencial=Math.min(worst.total, Math.round(worst.total*best.conv/100));
         pool.push({pri:1,type:'ic',icon:'🔴',tipo:'CRÍTICO',
-          titulo:`${best.v.split(' ')[0]} convierte ${best.conv.toFixed(1)}% — ${worst.v.split(' ')[0]} convierte ${worst.conv.toFixed(1)}%`,
-          num:(best.conv-worst.conv).toFixed(1)+'pp',
-          body:`Misma cartera, resultado diferente. Si ${worst.v.split(' ')[0]} igualara el TPPC de ${best.v.split(' ')[0]} (${fmtTppc(best.tppc)}), podría generar ~${est} cierres adicionales en sus ${worst.total} leads actuales.`});
+          titulo:`${worst.v.split(' ')[0]} tiene la menor conversión del equipo (${worst.conv.toFixed(1)}%) — ${best.v.split(' ')[0]} lidera con ${best.conv.toFixed(1)}%`,
+          num:(best.conv-worst.conv).toFixed(1)+'pp de diferencia',
+          body:`${worst.v.split(' ')[0]} debe revisar su proceso de calificación y seguimiento. Si alcanzara la tasa de conversión de ${best.v.split(' ')[0]} (${best.conv.toFixed(1)}%), podría generar ~${potencial} cierres de sus ${worst.total} leads actuales.`});
       }
     }
   }
@@ -1594,14 +1770,17 @@ function renderInsights(data) {
   // 12. TPPC mediano actual < TPPC mediano período anterior
   if (tppcMed&&prevTppcMed&&tppcMed<prevTppcMed) {
     const mejora=prevTppcMed-tppcMed;
+    // Unidades consistentes: si ambos >= 24h usar días; si alguno < 24h usar horas para ambos
+    const usaDias = tppcMed>=24 && prevTppcMed>=24;
+    const fmtC = h => usaDias ? (h/24).toFixed(1)+'d' : h.toFixed(1)+'h';
     pool.push({pri:3,type:'io',icon:'🟢',tipo:'POSITIVO',
-      titulo:`El equipo respondió ${fmtTppc(mejora)} más rápido que el período anterior`,
-      num:fmtTppc(tppcMed),
-      body:`Mediana bajó de ${fmtTppc(prevTppcMed)} a ${fmtTppc(tppcMed)}. Menor TPPC correlaciona históricamente con mayor conversión.`});
+      titulo:`El equipo respondió ${fmtC(mejora)} más rápido que el período anterior`,
+      num:fmtC(tppcMed),
+      body:`Mediana bajó de ${fmtC(prevTppcMed)} a ${fmtC(tppcMed)}. Menor TPPC correlaciona históricamente con mayor conversión.`});
   }
 
-  // 13. Asesor con conversión > 10% (con mínimo 5 leads)
-  const superAsesor=aData.find(a=>a.conv>10&&a.total>=5);
+  // 13. Asesor con conversión > 10% (mínimo 15 leads para evitar muestras no representativas)
+  const superAsesor=aData.find(a=>a.conv>10&&a.total>=15);
   if (superAsesor) {
     pool.push({pri:3,type:'io',icon:'🟢',tipo:'POSITIVO',
       titulo:`${superAsesor.v.split(' ')[0]} convirtió al ${superAsesor.conv.toFixed(1)}% — mejor marca del período`,
@@ -2140,3 +2319,4 @@ loadData();
 </script>
 </body>
 </html>
+
